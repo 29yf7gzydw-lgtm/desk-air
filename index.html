@@ -397,9 +397,36 @@ function loadHistory(){
       el("mDiff").innerHTML = round1(nAvg30) + "\u00B0 <span style='font-size:19px'>avg high</span>";
       el("mRain").innerHTML = Math.round(nRain30) + "mm rain in 30 days";
     }
-    if (!statsCache && loadStatsCache()) renderStats();
-    fetchArchive();
+    if (!statsCache){
+      el("hlsub").innerHTML = "Loading history since 1940\u2026";
+      if (loadStatsCache()) renderStats();
+    }
+    if (statsCache) fetchArchive();   /* background refresh from the full archive */
+    else fetchStatsFile();            /* tiny precomputed stats file first; archive is the fallback */
   }, function(){});
+}
+
+/* Historical stats, precomputed server-side into a ~1.4 KB stats.json (same trick as air.json):
+   the iPad never has to pull the 726 KB archive itself. Full archive stays as the fallback
+   and as a background correction. */
+function useStats(j){
+  var now = new Date();
+  var today = now.getFullYear() + "-" + pad(now.getMonth()+1) + "-" + pad(now.getDate());
+  if (j && j.day === today && j.s && j.s.st && j.s.st.vals){
+    statsCache = j.s;
+    saveStatsCache();
+    renderStats();
+    fetchArchive();
+    return true;
+  }
+  return false;
+}
+function fetchStatsFile(){
+  var raw = "https://raw.githubusercontent.com/29yf7gzydw-lgtm/desk-air/main/stats.json?cb=" + new Date().getTime();
+  getJSON(raw, function(j){ if (!useStats(j)) fetchStatsLocal(); }, function(){ fetchStatsLocal(); });
+}
+function fetchStatsLocal(){
+  getJSON("stats.json", function(j){ if (!useStats(j)) fetchArchive(); }, function(){ fetchArchive(); });
 }
 
 /* The 1940->last-year archive pull is heavy and occasionally fails on a home connection.
