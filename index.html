@@ -158,7 +158,7 @@ var MON = ["JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SE
 var MONS = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
 var DOW = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
 var curLat = null, curLon = null, havePos = false;
-var histData = null, histLoading = false;
+var histData = null, histLoading = false, statsCache = null, histTries = 0;
 var nTodayHigh = null, nYestHigh = null, nAvg30 = null, nRain30 = null;
 
 function pad(n){ return (n<10?"0":"")+n; }
@@ -193,25 +193,20 @@ function loadNow(){
   loadAir();
 }
 
-/* ---------- air quality: station data from /air.json (refreshed server-side every 15 min), CAMS model as fallback ---------- */
-function loadAirCAMS(){
-  var ua = "https://air-quality-api.open-meteo.com/v1/air-quality?latitude="+curLat+"&longitude="+curLon+
-    "&current=pm2_5,us_aqi&timezone=auto";
-  getJSON(ua, function(j){
-    if (j.current.pm2_5!==null && j.current.pm2_5!==undefined) el("nowPm").innerHTML = Math.round(j.current.pm2_5);
-    if (j.current.us_aqi!==null && j.current.us_aqi!==undefined) el("nowAqi").innerHTML = Math.round(j.current.us_aqi);
-  }, function(){});
-}
-
+/* ---------- air quality: REAL Thai PCD station data only, from air.json (GitHub Actions, every 30 min).
+   No model fallback — a model once invented AQI 206 from ozone. If the station file is
+   ever too old, the strip shows -- rather than fake numbers. ---------- */
 function useAir(j){
   var age = (new Date().getTime()/1000) - (j.ts||0);
-  if (j.pm!==null && j.pm!==undefined && age < 150*60){
+  if (j.pm!==null && j.pm!==undefined && age >= 0 && age < 6*3600){
     el("nowPm").innerHTML = j.pm;
-    if (j.aqi!==null && j.aqi!==undefined) el("nowAqi").innerHTML = j.aqi;
+    el("nowAqi").innerHTML = (j.aqi!==null && j.aqi!==undefined) ? j.aqi : "--";
     return true;
   }
   return false;
 }
+
+function noAir(){ el("nowPm").innerHTML = "--"; el("nowAqi").innerHTML = "--"; }
 
 function loadAir(){
   var raw = "https://raw.githubusercontent.com/29yf7gzydw-lgtm/desk-air/main/air.json?cb=" + new Date().getTime();
@@ -219,7 +214,7 @@ function loadAir(){
 }
 
 function loadAirLocal(){
-  getJSON("air.json", function(j){ if (!useAir(j)) loadAirCAMS(); }, function(){ loadAirCAMS(); });
+  getJSON("air.json", function(j){ if (!useAir(j)) noAir(); }, function(){ noAir(); });
 }
 
 /* ---------- historical stats (Open-Meteo Archive, ERA5) ---------- */
@@ -309,12 +304,36 @@ function renderDist(st){
   box.innerHTML = html;
 }
 
+function computeStats(){
+  var now = new Date();
+  var yd = new Date(now.getTime() - 86400000);
+  return { st: statsFor(pad(now.getMonth()+1) + "-" + pad(now.getDate())),
+           stY: statsFor(pad(yd.getMonth()+1) + "-" + pad(yd.getDate())),
+           wn: windowNormals() };
+}
+function statsDayKey(){
+  var now = new Date();
+  return now.getFullYear() + "-" + pad(now.getMonth()+1) + "-" + pad(now.getDate()) + "@" + Math.round(curLat*50) + "," + Math.round(curLon*50);
+}
+function saveStatsCache(){
+  try { localStorage.setItem("deskStatsV1", JSON.stringify({ day: statsDayKey(), s: statsCache })); } catch(e){}
+}
+function loadStatsCache(){
+  try {
+    var raw = localStorage.getItem("deskStatsV1");
+    if (!raw) return false;
+    var o = JSON.parse(raw);
+    if (!o || o.day !== statsDayKey() || !o.s || !o.s.st || !o.s.st.vals) return false;
+    statsCache = o.s;
+    return true;
+  } catch(e){ return false; }
+}
 function renderStats(){
-  if (!histData || nTodayHigh===null) return;
+  if (!statsCache || nTodayHigh===null) return;
   var now = new Date();
   var label = MON[now.getMonth()] + " " + now.getDate();
-  var st = statsFor(pad(now.getMonth()+1) + "-" + pad(now.getDate()));
-  if (st.n===0) return;
+  var st = statsCache.st;
+  if (!st || st.n===0) return;
   el("distTitle").innerHTML = label + " HIGHS DISTRIBUTION · Since 1940";
   el("histTitle").innerHTML = label + " HIGHS IN HISTORY";
   if (nTodayHigh < st.min){
@@ -342,12 +361,11 @@ function renderStats(){
   el("hWarm").innerHTML = round1(st.max) + "° ( " + st.maxY + " )";
   el("hCool").innerHTML = round1(st.min) + "° ( " + st.minY + " )";
   renderDist(st);
-  var yd = new Date(now.getTime() - 86400000);
-  var stY = statsFor(pad(yd.getMonth()+1) + "-" + pad(yd.getDate()));
+  var stY = statsCache.stY;
   if (nYestHigh!==null && stY.n>0){
     el("yVerdict").innerHTML = (nYestHigh < stY.p25) ? "A cool day" : (nYestHigh > stY.p75) ? "A warm day" : "A normal day";
   }
-  var wn = windowNormals();
+  var wn = statsCache.wn;
   if (wn && nAvg30!==null){
     var diff = round1(nAvg30 - wn.avgHigh);
     el("mDiff").innerHTML = (diff>0?"+":"") + diff + "° <span style='font-size:19px'>vs normal</span>";
@@ -363,10 +381,10 @@ function loadHistory(){
     var d = j.daily, n = d.time.length, i;
     nTodayHigh = d.temperature_2m_max[n-1];
     nYestHigh = d.temperature_2m_max[n-2];
-    el("tHigh").innerHTML = round1(nTodayHigh) + "°";
+    el("tHigh").innerHTML = round1(nTodayHigh) + "\u00B0";
     el("tLow").innerHTML = round1(d.temperature_2m_min[n-1]);
     el("tRain").innerHTML = (d.precipitation_sum[n-1]===null ? "--" : round1(d.precipitation_sum[n-1])) + "mm rain likely";
-    el("yHigh").innerHTML = round1(nYestHigh) + "°";
+    el("yHigh").innerHTML = round1(nYestHigh) + "\u00B0";
     var sh = 0, ch = 0, sr = 0;
     for (i=n-31;i<n-1;i++){
       if (d.temperature_2m_max[i]!==null){ sh += d.temperature_2m_max[i]; ch++; }
@@ -374,21 +392,42 @@ function loadHistory(){
     }
     nAvg30 = ch ? sh/ch : null;
     nRain30 = sr;
-    if (histData){ renderStats(); return; }
-    if (histLoading) return;
-    histLoading = true;
-    var yr = new Date().getFullYear() - 1;
-    var urlA = "https://archive-api.open-meteo.com/v1/archive?latitude="+curLat+"&longitude="+curLon+
-      "&start_date=1940-01-01&end_date="+yr+"-12-31&daily=temperature_2m_max,precipitation_sum&timezone=auto";
-    getJSON(urlA, function(a){
-      histData = { time: a.daily.time, max: a.daily.temperature_2m_max, rain: a.daily.precipitation_sum };
-      histLoading = false;
-      renderStats();
-    }, function(){
-      histLoading = false;
-      el("hlsub").innerHTML = "Could not load the historical archive — will retry on the next refresh.";
-    });
+    /* LAST 30 DAYS renders immediately from the forecast feed — never gated on the archive again */
+    if (nAvg30!==null){
+      el("mDiff").innerHTML = round1(nAvg30) + "\u00B0 <span style='font-size:19px'>avg high</span>";
+      el("mRain").innerHTML = Math.round(nRain30) + "mm rain in 30 days";
+    }
+    if (!statsCache && loadStatsCache()) renderStats();
+    fetchArchive();
   }, function(){});
+}
+
+/* The 1940->last-year archive pull is heavy and occasionally fails on a home connection.
+   It now retries with growing delays and keeps retrying slowly in the background;
+   a successful pull is cached for the rest of the day, so the stats survive reloads. */
+function fetchArchive(){
+  if (histData || histLoading) return;
+  histLoading = true;
+  var yr = new Date().getFullYear() - 1;
+  var urlA = "https://archive-api.open-meteo.com/v1/archive?latitude="+curLat+"&longitude="+curLon+
+    "&start_date=1940-01-01&end_date="+yr+"-12-31&daily=temperature_2m_max,precipitation_sum&timezone=auto";
+  getJSON(urlA, function(a){
+    histData = { time: a.daily.time, max: a.daily.temperature_2m_max, rain: a.daily.precipitation_sum };
+    histLoading = false;
+    histTries = 0;
+    statsCache = computeStats();
+    saveStatsCache();
+    renderStats();
+  }, function(){
+    histLoading = false;
+    histTries++;
+    if (histTries <= 4){
+      setTimeout(fetchArchive, histTries * 30000);
+    } else if (!statsCache){
+      el("hlsub").innerHTML = "Historical archive unreachable — still retrying in the background.";
+      setTimeout(function(){ histTries = 0; fetchArchive(); }, 10*60*1000);
+    }
+  });
 }
 
 /* ---------- location: automatic, from the device itself ---------- */
