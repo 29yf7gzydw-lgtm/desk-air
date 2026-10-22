@@ -98,7 +98,7 @@
     <div id="qAuthor"></div>
   </div>
   <div id="qDate"></div>
-  <div class="qHint">TAP THE QUOTE FOR A NEW ONE</div>
+  <div class="qHint">A NEW QUOTE EVERY HOUR</div>
 </div>
 <div id="wrap">
 
@@ -448,8 +448,7 @@ var QUOTES = [
   { q: "I came, I saw, I conquered.", a: "Julius Caesar" },
   { q: "Diplomacy without arms is like music without instruments.", a: "Frederick the Great" }
 ];
-/* quote: a fresh random quote every hour; tapping the quote itself deals another */
-var qLast = -1;
+/* quote: ONE screen in the rotation; its content swaps to a fresh random quote every hour, on the clock */
 function renderQuote(idx){
   var item = QUOTES[idx], now = new Date();
   el("qText").innerHTML = "\u201C" + item.q + "\u201D";
@@ -464,17 +463,7 @@ function hourlyQuoteIdx(){
   return Math.abs(x) % QUOTES.length;
 }
 function quoteOfDay(){
-  var idx = hourlyQuoteIdx();
-  if (idx === qLast) idx = (idx + 1) % QUOTES.length;
-  qLast = idx;
-  renderQuote(idx);
-}
-function nextQuote(){
-  var idx = Math.floor(Math.random() * QUOTES.length);
-  if (idx === qLast) idx = (idx + 1) % QUOTES.length;
-  qLast = idx;
-  renderQuote(idx);
-  restartRotation();
+  renderQuote(hourlyQuoteIdx());
 }
 var screens = ["wrap", "quoteview", "artview"], curScreen = 0, rotTimer = null;
 function showScreen(n){
@@ -487,7 +476,7 @@ function restartRotation(){
   rotTimer = setInterval(function(){ showScreen((curScreen + 1) % screens.length); }, 5 * 60 * 1000);
 }
 function advanceScreen(){ showScreen((curScreen + 1) % screens.length); restartRotation(); }
-document.addEventListener("click", function(e){ if (e.target === el("footL")) return; if (curScreen === 1 && e.target.closest && e.target.closest("#qBody")){ nextQuote(); return; } advanceScreen(); }, false);
+document.addEventListener("click", function(e){ if (e.target === el("footL")) return; advanceScreen(); }, false);
 quoteOfDay();
 restartRotation();
 
