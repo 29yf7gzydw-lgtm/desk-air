@@ -436,6 +436,7 @@ function fmtCoord(lat, lon){
 }
 function applyPos(lat, lon){
   curLat = lat; curLon = lon; havePos = true;
+  try { localStorage.setItem("deskPos", JSON.stringify({ lat: lat, lon: lon })); } catch(e){}
   el("fCoords").innerHTML = fmtCoord(lat, lon);
   loadNow(); loadHistory();
   var url = "https://api.bigdatacloud.net/data/reverse-geocode-client?latitude="+lat+"&longitude="+lon+"&localityLanguage=en";
@@ -443,6 +444,14 @@ function applyPos(lat, lon){
     var name = j.city || j.locality || j.principalSubdivision || "";
     if (name) el("fPlace").innerHTML = name;
   }, function(){});
+}
+function restorePos(){
+  try {
+    var raw = localStorage.getItem("deskPos");
+    if (!raw) return;
+    var p = JSON.parse(raw);
+    if (p && p.lat && p.lon) applyPos(p.lat, p.lon);
+  } catch(e){}
 }
 function locate(){
   if (!navigator.geolocation) return;
@@ -551,9 +560,13 @@ el("footL").addEventListener("dblclick", function(){
 initNote();
 tickClock();
 setInterval(tickClock, 10000);
+restorePos();
 locate();
 setInterval(function(){ locate(); loadNow(); }, 15*60*1000);
-setTimeout(function(){ location.reload(); }, 60*60*1000);
+setTimeout(function(){
+  var m = /[?&]note=([^&]*)/.exec(location.search);
+  location.replace(location.pathname + "?v=" + new Date().getTime() + (m ? "&note=" + m[1] : ""));
+}, 60*60*1000);
 </script>
 </body>
 </html>
