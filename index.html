@@ -85,6 +85,7 @@
   #quoteview .qRule { border-top:3px dotted #999; width:130px; margin:36px auto 26px auto; }
   #qAuthor { font-family:"Helvetica Neue Condensed Bold","Arial Narrow","Helvetica Neue",Arial,sans-serif; font-size:25px; letter-spacing:4px; color:#111; }
   #qDate { margin-top:14px; font-size:17px; letter-spacing:2px; color:#888; text-transform:uppercase; }
+  #quoteview .qHint { position:absolute; bottom:26px; left:0; width:100%; font-size:13px; letter-spacing:3px; color:#bbb; }
 </style>
 </head>
 <body>
@@ -95,6 +96,7 @@
   <div class="qRule"></div>
   <div id="qAuthor"></div>
   <div id="qDate"></div>
+  <div class="qHint">TAP FOR ANOTHER QUOTE</div>
 </div>
 <div id="wrap">
 
@@ -444,11 +446,26 @@ var QUOTES = [
   { q: "I came, I saw, I conquered.", a: "Julius Caesar" },
   { q: "Diplomacy without arms is like music without instruments.", a: "Frederick the Great" }
 ];
+var qIdx = -1;
+function dayOfYear(){ var now = new Date(); var start = new Date(now.getFullYear(), 0, 0); return Math.floor((now - start) / 86400000); }
+function nextQuote(){
+  if (qIdx < 0) qIdx = (dayOfYear() + 5) % QUOTES.length;
+  qIdx = (qIdx + 1) % QUOTES.length;
+  quoteOfDay();
+  try { localStorage.setItem("deskQuote", JSON.stringify({ day: dayOfYear(), idx: qIdx })); } catch(e){}
+  restartRotation();
+}
 function quoteOfDay(){
   var now = new Date();
-  var start = new Date(now.getFullYear(), 0, 0);
-  var doy = Math.floor((now - start) / 86400000);
-  var item = QUOTES[doy % QUOTES.length];
+  var doy = dayOfYear();
+  if (qIdx < 0){
+    qIdx = (doy + 5) % QUOTES.length;
+    try {
+      var saved = JSON.parse(localStorage.getItem("deskQuote") || "null");
+      if (saved && saved.day === doy && saved.idx >= 0 && saved.idx < QUOTES.length) qIdx = saved.idx;
+    } catch(e){}
+  }
+  var item = QUOTES[qIdx];
   el("qText").innerHTML = "\u201C" + item.q + "\u201D";
   el("qAuthor").innerHTML = item.a.toUpperCase();
   el("qDate").innerHTML = DOW[now.getDay()] + " " + now.getDate() + " " + MONS[now.getMonth()] + " " + now.getFullYear();
@@ -464,7 +481,7 @@ function restartRotation(){
   rotTimer = setInterval(function(){ showScreen((curScreen + 1) % screens.length); }, 5 * 60 * 1000);
 }
 function advanceScreen(){ showScreen((curScreen + 1) % screens.length); restartRotation(); }
-document.addEventListener("click", function(e){ if (e.target === el("footL")) return; advanceScreen(); }, false);
+document.addEventListener("click", function(e){ if (e.target === el("footL")) return; if (curScreen === 1){ nextQuote(); } else { advanceScreen(); } }, false);
 quoteOfDay();
 restartRotation();
 
