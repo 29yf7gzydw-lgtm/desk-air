@@ -453,12 +453,19 @@ function restorePos(){
     if (p && p.lat && p.lon) applyPos(p.lat, p.lon);
   } catch(e){}
 }
+var locRetryPending = false;
 function locate(){
   if (!navigator.geolocation) return;
   navigator.geolocation.getCurrentPosition(function(p){
     applyPos(p.coords.latitude, p.coords.longitude);
   }, function(err){
-    if (!havePos) el("hlsub").innerHTML = "Location is off for Safari — turn it on once: Settings → Privacy → Location Services → Safari Websites → While Using. This screen then runs itself.";
+    if (!havePos){
+      el("hlsub").innerHTML = "Location is off for this browser — allow it once and this screen runs itself: tap the lock icon beside the address bar → Location → Allow. Or: iOS Settings → Privacy → Location Services → (your browser) → While Using the App.";
+      if (!locRetryPending){
+        locRetryPending = true;
+        setTimeout(function(){ locRetryPending = false; locate(); }, 60000);
+      }
+    }
   }, { enableHighAccuracy:false, timeout:20000, maximumAge:600000 });
 }
 
