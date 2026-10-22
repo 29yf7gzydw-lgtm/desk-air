@@ -1,0 +1,35 @@
+name: Update air quality
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch station data
+        env:
+          OPENAQ_KEY: ${{ secrets.OPENAQ_KEY }}
+          LAT: ${{ secrets.LAT }}
+          LNG: ${{ secrets.LNG }}
+        run: python update_air.py
+      - name: Commit if changed
+        run: |
+          git config user.name "desk-air bot"
+          git config user.email "actions@github.com"
+          git add air.json
+          if git diff --cached --quiet; then
+            echo "no change"
+          else
+            git commit -m "Update air.json"
+            git push
+          fi
