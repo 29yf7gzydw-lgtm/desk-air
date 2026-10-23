@@ -39,8 +39,11 @@ def get_json(url):
 def main():
     now = datetime.now(ICT)
     today = now.strftime("%Y-%m-%d")
-    hourly = get_json("%s/hourly/at?lat=%s&lon=%s&fields=tc,rain"
+    tomorrow = (now.fromtimestamp(now.timestamp() + 86400, ICT)).strftime("%Y-%m-%d")
+    hourly = get_json("%s/hourly/at?lat=%s&lon=%s&fields=tc,rain,cond"
                       "&date=%s&hour=0&duration=24" % (BASE, LAT, LNG, today))
+    hourly2 = get_json("%s/hourly/at?lat=%s&lon=%s&fields=tc,rain,cond"
+                       "&date=%s&hour=0&duration=9" % (BASE, LAT, LNG, tomorrow))
     daily = get_json("%s/daily/at?lat=%s&lon=%s&fields=tc_max,tc_min"
                      "&date=%s&duration=1" % (BASE, LAT, LNG, today))
 
@@ -78,6 +81,26 @@ def main():
         print("incomplete data", now_tc, hi, lo)
         return 1
 
+    # Next 6 forecast hours after the current hour (stitched across midnight
+    # from tomorrow's early hours) for the page's NEXT HOURS strip.
+    fc2 = (hourly2.get("WeatherForecasts") or [{}])[0].get("forecasts") or []
+    nxt = []
+    for e in fc + fc2:
+        t = datetime.fromisoformat(e["time"])
+        if t <= now.replace(minute=0, second=0, microsecond=0):
+            continue
+        d = e.get("data") or {}
+        if d.get("tc") is None:
+            continue
+        nxt.append({
+            "t": t.strftime("%H:00"),
+            "tc": round(d["tc"], 1),
+            "rain": round(d.get("rain") or 0, 1),
+            "cond": d.get("cond") or 1,
+        })
+        if len(nxt) >= 6:
+            break
+
     payload = {
         "ts": int(now.timestamp()),
         "glat": loc.get("lat"),
@@ -86,6 +109,7 @@ def main():
         "hi": round(hi, 1),
         "lo": round(lo, 1),
         "rain": round(rain, 1),
+        "next": nxt,
     }
     with open("wx.json", "w", encoding="utf-8") as f:
         json.dump(payload, f)
