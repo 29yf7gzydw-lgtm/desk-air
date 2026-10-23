@@ -187,9 +187,17 @@ function getJSON(url, done, fail){
 
 function loadNow(){
   if (!havePos) return;
-  var url = "https://api.open-meteo.com/v1/forecast?latitude="+curLat+"&longitude="+curLon+
+  /* Source per variable (2026-10-24): current + forecast are pinned to ECMWF IFS —
+     the best-verified single model for the tropics — instead of Open-Meteo best_match,
+     which silently switches models between runs. Fallback to best_match only if the
+     ECMWF feed fails. History/normals stay on ERA5 (climatology); AQI stays PCD. */
+  var base = "https://api.open-meteo.com/v1/forecast?latitude="+curLat+"&longitude="+curLon+
     "&current=temperature_2m&timezone=auto&forecast_days=1";
-  getJSON(url, function(j){ el("nowTemp").innerHTML = Math.round(j.current.temperature_2m) + "°"; }, function(){});
+  var show = function(j){ el("nowTemp").innerHTML = Math.round(j.current.temperature_2m) + "°"; };
+  getJSON(base+"&models=ecmwf_ifs025", function(j){
+    if (j && j.current && j.current.temperature_2m!==null && j.current.temperature_2m!==undefined) show(j);
+    else getJSON(base, show, function(){});
+  }, function(){ getJSON(base, show, function(){}); });
   loadAir();
 }
 
@@ -377,7 +385,7 @@ function loadHistory(){
   if (!havePos) return;
   var urlF = "https://api.open-meteo.com/v1/forecast?latitude="+curLat+"&longitude="+curLon+
     "&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto&past_days=31&forecast_days=1";
-  getJSON(urlF, function(j){
+  var useFeed = function(j){
     var d = j.daily, n = d.time.length, i;
     nTodayHigh = d.temperature_2m_max[n-1];
     nYestHigh = d.temperature_2m_max[n-2];
@@ -403,7 +411,12 @@ function loadHistory(){
     }
     if (statsCache) fetchArchive();   /* background refresh from the full archive */
     else fetchStatsFile();            /* tiny precomputed stats file first; archive is the fallback */
-  }, function(){});
+  };
+  /* ECMWF IFS pinned (see loadNow); best_match only as a failure fallback */
+  getJSON(urlF+"&models=ecmwf_ifs025", function(j){
+    if (j && j.daily && j.daily.time && j.daily.temperature_2m_max && j.daily.temperature_2m_max[j.daily.time.length-1]!==null) useFeed(j);
+    else getJSON(urlF, useFeed, function(){});
+  }, function(){ getJSON(urlF, useFeed, function(){}); });
 }
 
 /* Historical stats, precomputed server-side into a ~1.4 KB stats.json (same trick as air.json):
