@@ -57,6 +57,16 @@
   .hlab { font-size:15px; color:#333; }
   .hval { font-size:25px; font-weight:700; }
 
+  /* next hours + almanac rows */
+  .stitle { font-size:15px; font-weight:700; letter-spacing:2px; }
+  #nhSum { font-size:19px; color:#222; margin-top:3px; }
+  #nhStrip { display:-webkit-flex; display:flex; width:100%; margin-top:8px; }
+  .nhcell { -webkit-flex:1; flex:1; }
+  .nhcell + .nhcell { border-left:2px dotted #999; padding-left:14px; margin-left:14px; }
+  .nhHr { font-size:14px; font-weight:700; letter-spacing:1px; color:#333; }
+  .nhTc { font-size:30px; font-weight:700; line-height:1.05; }
+  .nhSub { font-size:14px; color:#222; }
+
   /* footer */
   #footer { margin-top:12px; background-color:#e9e9e9;
     background-image:-webkit-radial-gradient(circle, #bdbdbd 1.3px, transparent 1.5px);
@@ -146,6 +156,24 @@
     <div class="hcol"><div class="hlab">Coolest</div><div class="hval num" id="hCool">--</div></div>
   </div>
 
+  <div class="rule"></div>
+  <div class="stitle" id="nhTitle">NEXT HOURS</div>
+  <div id="nhSum">…</div>
+  <div id="nhStrip"></div>
+
+  <div class="rule"></div>
+  <div class="stitle">ALMANAC</div>
+  <div class="hcols">
+    <div class="hcol"><div class="hlab">Sunrise</div><div class="hval num" id="aSunrise">--</div></div>
+    <div class="hcol"><div class="hlab">Sunset</div><div class="hval num" id="aSunset">--</div></div>
+    <div class="hcol"><div class="hlab" id="aUVlab">UV max</div><div class="hval num" id="aUV">--</div></div>
+  </div>
+  <div class="hcols">
+    <div class="hcol"><div class="hlab">Feels like</div><div class="hval num" id="aFeels">--</div></div>
+    <div class="hcol"><div class="hlab">Humidity</div><div class="hval num" id="aHum">--</div></div>
+    <div class="hcol"><div class="hlab">Wind</div><div class="hval num" id="aWind">--</div></div>
+  </div>
+
   <div id="footer">
     <div id="footL">You do not rise to the level of your goals. You fall to the level of your systems.</div>
     <div id="footR"><span id="fPlace"></span> · <span id="fCoords">—</span></div>
@@ -192,8 +220,15 @@ function loadNow(){
      which silently switches models between runs. Fallback to best_match only if the
      ECMWF feed fails. History/normals stay on ERA5 (climatology); AQI stays PCD. */
   var base = "https://api.open-meteo.com/v1/forecast?latitude="+curLat+"&longitude="+curLon+
-    "&current=temperature_2m&timezone=auto&forecast_days=1";
-  var show = function(j){ el("nowTemp").innerHTML = Math.round(j.current.temperature_2m) + "°"; if (wxFresh()) el("nowTemp").innerHTML = Math.round(wxToday.now) + "°"; };
+    "&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,wind_direction_10m&timezone=auto&forecast_days=1";
+  var show = function(j){
+    el("nowTemp").innerHTML = Math.round(j.current.temperature_2m) + "°";
+    if (wxFresh()) el("nowTemp").innerHTML = Math.round(wxToday.now) + "°";
+    var c = j.current;
+    if (c.apparent_temperature!==null && c.apparent_temperature!==undefined) el("aFeels").innerHTML = Math.round(c.apparent_temperature) + "°";
+    if (c.relative_humidity_2m!==null && c.relative_humidity_2m!==undefined) el("aHum").innerHTML = Math.round(c.relative_humidity_2m) + "%";
+    if (c.wind_speed_10m!==null && c.wind_speed_10m!==undefined) el("aWind").innerHTML = Math.round(c.wind_speed_10m) + " km/h " + compass(c.wind_direction_10m);
+  };
   getJSON(base+"&models=ecmwf_ifs025", function(j){
     if (j && j.current && j.current.temperature_2m!==null && j.current.temperature_2m!==undefined) show(j);
     else getJSON(base, show, function(){});
@@ -251,6 +286,7 @@ function useWx(j){
   wxToday = j;
   el("nowTemp").innerHTML = Math.round(j.now) + "°";
   applyWxToday();
+  if (j.next && j.next.length) renderNextHours(j.next, "TMD");
   return true;
 }
 function applyWxToday(){
@@ -267,6 +303,99 @@ function loadWx(){
 }
 function loadWxLocal(){
   getJSON("wx.json", function(j){ useWx(j); }, function(){});
+}
+
+/* ---------- NEXT HOURS + ALMANAC ----------
+   NEXT HOURS logic: the next 6 forecast hours as one strip + one summary line.
+   Rain wins the summary (first wet hour named, heaviest hour quantified,
+   thunderstorms called out); if the window is dry, the summary describes the
+   sky (dominant condition) and the temperature trend instead. Primary source:
+   TMD via wx.json. ECMWF hourly fills in only while no fresh TMD is applied,
+   so a device away from home still gets a short-range outlook of its own. */
+var COND_TXT = {1:"CLEAR SKIES",2:"PARTLY CLOUDY",3:"CLOUDY",4:"OVERCAST",5:"LIGHT RAIN",6:"RAIN",7:"HEAVY RAIN",8:"THUNDERSTORMS",9:"VERY COLD",10:"COLD",11:"COOL",12:"VERY HOT"};
+var COND_SHORT = {1:"CLEAR",2:"P.CLOUDY",3:"CLOUDY",4:"OVERCAST",5:"L.RAIN",6:"RAIN",7:"H.RAIN",8:"STORM",9:"V.COLD",10:"COLD",11:"COOL",12:"V.HOT"};
+function compass(deg){
+  if (deg===null || deg===undefined) return "";
+  var dirs = ["N","NE","E","SE","S","SW","W","NW"];
+  return dirs[Math.round(deg/45) % 8];
+}
+function wmoToCond(w){
+  if (w===0) return 1; if (w===1) return 2; if (w===2) return 3;
+  if (w===3 || w===45 || w===48) return 4;
+  if (w>=51 && w<=57) return 5;
+  if (w===61) return 5;
+  if (w===63 || w===66 || w===67 || w===80 || w===81) return 6;
+  if (w===65 || w===82) return 7;
+  if ((w>=71 && w<=77) || w===85 || w===86) return 10;
+  if (w===95 || w===96 || w===99) return 8;
+  return 3;
+}
+function renderNextHours(list, src){
+  if (!list || !list.length) return;
+  el("nhTitle").innerHTML = "NEXT HOURS · " + src;
+  var i, firstRain = -1, wetIdx = -1, heavy = 0, storm = false;
+  var counts = {}, modeCond = list[0].cond;
+  for (i=0;i<list.length;i++){
+    var h = list[i];
+    counts[h.cond] = (counts[h.cond]||0) + 1;
+    if (counts[h.cond] > (counts[modeCond]||0)) modeCond = h.cond;
+    if ((h.rain >= 0.1 || h.cond >= 5) && firstRain < 0) firstRain = i;
+    if (h.rain > heavy){ heavy = h.rain; wetIdx = i; }
+    if (h.cond === 8) storm = true;
+  }
+  var s;
+  if (firstRain >= 0 && firstRain <= 2){
+    s = (storm ? "THUNDERSTORMS" : "RAIN") + " FROM ~" + list[firstRain].t;
+    if (heavy >= 0.1 && wetIdx >= 0) s += " — HEAVIEST " + round1(heavy) + "MM AT " + list[wetIdx].t;
+  } else if (firstRain > 2){
+    s = "DRY UNTIL ~" + list[firstRain].t + " — RAIN AFTER";
+  } else {
+    s = COND_TXT[modeCond] || "—";
+    var dT = list[list.length-1].tc - list[0].tc;
+    if (dT >= 1) s += " — WARMING TO " + round1(list[list.length-1].tc) + "° BY " + list[list.length-1].t;
+    else if (dT <= -1) s += " — COOLING TO " + round1(list[list.length-1].tc) + "° BY " + list[list.length-1].t;
+  }
+  el("nhSum").innerHTML = s;
+  var html = "";
+  for (i=0;i<list.length;i++){
+    var h2 = list[i];
+    var sub = (h2.rain >= 0.1) ? (round1(h2.rain) + "MM") : (COND_SHORT[h2.cond] || "");
+    html += '<div class="nhcell"><div class="nhHr">' + h2.t + '</div><div class="nhTc num">' + Math.round(h2.tc) + '°</div><div class="nhSub">' + sub + '</div></div>';
+  }
+  el("nhStrip").innerHTML = html;
+}
+function loadNextFallback(){
+  if (!havePos) return;
+  var base = "https://api.open-meteo.com/v1/forecast?latitude="+curLat+"&longitude="+curLon+
+    "&hourly=temperature_2m,precipitation,weather_code&timezone=auto&forecast_days=2";
+  var run = function(u, retry){
+    getJSON(u, function(j){
+      if (wxFresh()) return;
+      if (!j || !j.hourly || !j.hourly.time){ if (retry) run(base, false); return; }
+      var H = j.hourly, nowMs = new Date().getTime(), list = [];
+      for (var i=0;i<H.time.length && list.length<6;i++){
+        var t = new Date(H.time[i]);
+        if (t.getTime() > nowMs){
+          list.push({ t: pad(t.getHours())+":00", tc: H.temperature_2m[i], rain: H.precipitation[i] || 0, cond: wmoToCond(H.weather_code[i]) });
+        }
+      }
+      renderNextHours(list, "ECMWF");
+    }, function(){ if (retry) run(base, false); });
+  };
+  run(base + "&models=ecmwf_ifs025", true);
+}
+function setUV(v){
+  var uv = Math.round(v);
+  el("aUV").innerHTML = uv;
+  el("aUVlab").innerHTML = "UV max · " + (uv<=2 ? "LOW" : uv<=5 ? "MODERATE" : uv<=7 ? "HIGH" : uv<=10 ? "VERY HIGH" : "EXTREME");
+}
+function loadUV(){
+  if (!havePos) return;
+  var url = "https://api.open-meteo.com/v1/forecast?latitude="+curLat+"&longitude="+curLon+
+    "&daily=uv_index_max&timezone=auto&forecast_days=1";
+  getJSON(url, function(j){
+    if (j && j.daily && j.daily.uv_index_max && j.daily.uv_index_max[0]!==null && j.daily.uv_index_max[0]!==undefined) setUV(j.daily.uv_index_max[0]);
+  }, function(){});
 }
 
 /* ---------- historical stats (Open-Meteo Archive, ERA5) ---------- */
@@ -432,7 +561,7 @@ function renderStats(){
 function loadHistory(){
   if (!havePos) return;
   var urlF = "https://api.open-meteo.com/v1/forecast?latitude="+curLat+"&longitude="+curLon+
-    "&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto&past_days=31&forecast_days=1";
+    "&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset&timezone=auto&past_days=31&forecast_days=1";
   var useFeed = function(j){
     var d = j.daily, n = d.time.length, i;
     nTodayHigh = d.temperature_2m_max[n-1];
@@ -440,6 +569,8 @@ function loadHistory(){
     el("tHigh").innerHTML = round1(nTodayHigh) + "\u00B0";
     el("tLow").innerHTML = round1(d.temperature_2m_min[n-1]);
     el("tRain").innerHTML = (d.precipitation_sum[n-1]===null ? "--" : round1(d.precipitation_sum[n-1])) + "mm rain likely";
+    if (d.sunrise && d.sunrise[n-1]) el("aSunrise").innerHTML = (""+d.sunrise[n-1]).substring(11,16);
+    if (d.sunset && d.sunset[n-1]) el("aSunset").innerHTML = (""+d.sunset[n-1]).substring(11,16);
     el("yHigh").innerHTML = round1(nYestHigh) + "\u00B0";
     var sh = 0, ch = 0, sr = 0;
     for (i=n-31;i<n-1;i++){
@@ -527,7 +658,7 @@ function applyPos(lat, lon){
   curLat = lat; curLon = lon; havePos = true;
   try { localStorage.setItem("deskPos", JSON.stringify({ lat: lat, lon: lon })); } catch(e){}
   el("fCoords").innerHTML = fmtCoord(lat, lon);
-  loadNow(); loadHistory(); loadWx();
+  loadNow(); loadHistory(); loadWx(); loadNextFallback(); loadUV();
   var url = "https://api.bigdatacloud.net/data/reverse-geocode-client?latitude="+lat+"&longitude="+lon+"&localityLanguage=en";
   getJSON(url, function(j){
     var name = j.city || j.locality || j.principalSubdivision || "";
@@ -658,7 +789,7 @@ tickClock();
 setInterval(tickClock, 10000);
 restorePos();
 locate();
-setInterval(function(){ locate(); loadNow(); loadWx(); }, 15*60*1000);
+setInterval(function(){ locate(); loadNow(); loadWx(); loadNextFallback(); }, 15*60*1000);
 setTimeout(function(){
   var m = /[?&]note=([^&]*)/.exec(location.search);
   location.replace(location.pathname + "?v=" + new Date().getTime() + (m ? "&note=" + m[1] : ""));
