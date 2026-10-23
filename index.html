@@ -66,6 +66,7 @@
   .nhHr { font-size:14px; font-weight:700; letter-spacing:1px; color:#333; }
   .nhTc { font-size:27px; font-weight:700; line-height:1.05; }
   .hcols.alm .hval { font-size:23px; }
+  #aUVlab { white-space:nowrap; font-size:13px; }
   .nhSub { font-size:14px; color:#222; }
 
   /* footer */
@@ -409,7 +410,7 @@ function loadNextFallback(){
 function setUV(v){
   var uv = Math.round(v);
   el("aUV").innerHTML = uv;
-  el("aUVlab").innerHTML = "UV max · " + (uv<=2 ? "LOW" : uv<=5 ? "MODERATE" : uv<=7 ? "HIGH" : uv<=10 ? "V.HIGH" : "EXTREME");
+  el("aUVlab").innerHTML = "UV max · " + (uv<=2 ? "Low" : uv<=7 ? "Average" : uv<=10 ? "Very High" : "Extreme");
 }
 function loadUV(){
   if (!havePos) return;
