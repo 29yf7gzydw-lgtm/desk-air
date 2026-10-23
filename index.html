@@ -409,7 +409,7 @@ function loadNextFallback(){
 function setUV(v){
   var uv = Math.round(v);
   el("aUV").innerHTML = uv;
-  el("aUVlab").innerHTML = "UV max · " + (uv<=2 ? "LOW" : uv<=5 ? "MODERATE" : uv<=7 ? "HIGH" : uv<=10 ? "VERY HIGH" : "EXTREME");
+  el("aUVlab").innerHTML = "UV max · " + (uv<=2 ? "LOW" : uv<=5 ? "MODERATE" : uv<=7 ? "HIGH" : uv<=10 ? "V.HIGH" : "EXTREME");
 }
 function loadUV(){
   if (!havePos) return;
