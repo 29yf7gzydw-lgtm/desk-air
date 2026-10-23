@@ -349,6 +349,10 @@ function renderDist(st){
   html += scale(st.min, round1(st.min) + "°");
   if (nTodayHigh!==null){
     var ty = Y(nTodayHigh);
+    /* a forecast beyond the historical range (e.g. TMD calling a record) would
+       otherwise fly off the top/bottom of the chart and collide with the title */
+    if (ty < 26) ty = 26;
+    if (ty > H-8) ty = H-8;
     html += '<div class="todayline" style="left:196px;width:86px;top:' + ty + 'px"></div>';
     html += '<div class="todaymark" style="left:182px;top:' + (ty-7) + 'px"></div>';
     html += '<div class="todaylab" style="right:0;width:90px;top:' + (ty-24) + 'px">TODAY<br>' + round1(nTodayHigh) + '°</div>';
