@@ -193,7 +193,7 @@ function loadNow(){
      ECMWF feed fails. History/normals stay on ERA5 (climatology); AQI stays PCD. */
   var base = "https://api.open-meteo.com/v1/forecast?latitude="+curLat+"&longitude="+curLon+
     "&current=temperature_2m&timezone=auto&forecast_days=1";
-  var show = function(j){ el("nowTemp").innerHTML = Math.round(j.current.temperature_2m) + "°"; };
+  var show = function(j){ el("nowTemp").innerHTML = Math.round(j.current.temperature_2m) + "°"; if (wxFresh()) el("nowTemp").innerHTML = Math.round(wxToday.now) + "°"; };
   getJSON(base+"&models=ecmwf_ifs025", function(j){
     if (j && j.current && j.current.temperature_2m!==null && j.current.temperature_2m!==undefined) show(j);
     else getJSON(base, show, function(){});
@@ -223,6 +223,50 @@ function loadAir(){
 
 function loadAirLocal(){
   getJSON("air.json", function(j){ if (!useAir(j)) noAir(); }, function(){ noAir(); });
+}
+
+/* ---------- TMD forecast: wx.json (GitHub Actions, every 30 min, same job as air.json).
+   Source per variable (2026-10-24): when wx.json is fresh (< 3 h) and the device is
+   within ~8 km of the TMD grid point it was computed for, NOW temp + today's
+   high/low/rain come from the Thai Meteorological Department's NWP (WRF) model —
+   the best-resolved source for Thailand. Anywhere else, or if wx is stale, the
+   page keeps the ECMWF values. The API token never touches this page: wx.json is
+   precomputed server-side, exactly like air.json. ---------- */
+var wxToday = null;
+function distKm(lat1, lon1, lat2, lon2){
+  var dLat = (lat2-lat1) * 111.32;
+  var dLon = (lon2-lon1) * 111.32 * Math.cos(lat1 * Math.PI/180);
+  return Math.sqrt(dLat*dLat + dLon*dLon);
+}
+function wxFresh(){
+  if (!wxToday) return false;
+  var age = (new Date().getTime()/1000) - (wxToday.ts||0);
+  return age >= 0 && age < 3*3600;
+}
+function useWx(j){
+  var age = (new Date().getTime()/1000) - (j.ts||0);
+  if (j.now===null || j.now===undefined || !(age >= 0 && age < 3*3600)) return false;
+  if (!havePos || j.glat===null || j.glat===undefined) return false;
+  if (distKm(curLat, curLon, j.glat, j.glon) > 8) return false;
+  wxToday = j;
+  el("nowTemp").innerHTML = Math.round(j.now) + "°";
+  applyWxToday();
+  return true;
+}
+function applyWxToday(){
+  if (!wxFresh()) return;
+  nTodayHigh = wxToday.hi;
+  el("tHigh").innerHTML = round1(wxToday.hi) + "\u00B0";
+  el("tLow").innerHTML = round1(wxToday.lo);
+  el("tRain").innerHTML = round1(wxToday.rain) + "mm rain likely";
+  if (statsCache) renderStats();
+}
+function loadWx(){
+  var raw = "https://raw.githubusercontent.com/29yf7gzydw-lgtm/desk-air/main/wx.json?cb=" + new Date().getTime();
+  getJSON(raw, function(j){ if (!useWx(j)) loadWxLocal(); }, function(){ loadWxLocal(); });
+}
+function loadWxLocal(){
+  getJSON("wx.json", function(j){ useWx(j); }, function(){});
 }
 
 /* ---------- historical stats (Open-Meteo Archive, ERA5) ---------- */
@@ -411,6 +455,7 @@ function loadHistory(){
     }
     if (statsCache) fetchArchive();   /* background refresh from the full archive */
     else fetchStatsFile();            /* tiny precomputed stats file first; archive is the fallback */
+    applyWxToday();                   /* TMD overrides today's panel when fresh + near */
   };
   /* ECMWF IFS pinned (see loadNow); best_match only as a failure fallback */
   getJSON(urlF+"&models=ecmwf_ifs025", function(j){
@@ -478,7 +523,7 @@ function applyPos(lat, lon){
   curLat = lat; curLon = lon; havePos = true;
   try { localStorage.setItem("deskPos", JSON.stringify({ lat: lat, lon: lon })); } catch(e){}
   el("fCoords").innerHTML = fmtCoord(lat, lon);
-  loadNow(); loadHistory();
+  loadNow(); loadHistory(); loadWx();
   var url = "https://api.bigdatacloud.net/data/reverse-geocode-client?latitude="+lat+"&longitude="+lon+"&localityLanguage=en";
   getJSON(url, function(j){
     var name = j.city || j.locality || j.principalSubdivision || "";
@@ -609,7 +654,7 @@ tickClock();
 setInterval(tickClock, 10000);
 restorePos();
 locate();
-setInterval(function(){ locate(); loadNow(); }, 15*60*1000);
+setInterval(function(){ locate(); loadNow(); loadWx(); }, 15*60*1000);
 setTimeout(function(){
   var m = /[?&]note=([^&]*)/.exec(location.search);
   location.replace(location.pathname + "?v=" + new Date().getTime() + (m ? "&note=" + m[1] : ""));
