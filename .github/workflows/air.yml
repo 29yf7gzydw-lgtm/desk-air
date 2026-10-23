@@ -22,11 +22,19 @@ jobs:
           LAT: ${{ secrets.LAT }}
           LNG: ${{ secrets.LNG }}
         run: python update_air.py
+      - name: Fetch TMD forecast
+        continue-on-error: true
+        env:
+          TMD_TOKEN: ${{ secrets.TMD_TOKEN }}
+          LAT: ${{ secrets.LAT }}
+          LNG: ${{ secrets.LNG }}
+        run: python update_wx.py
       - name: Commit if changed
         run: |
           git config user.name "desk-air bot"
           git config user.email "actions@github.com"
           git add air.json
+          if [ -f wx.json ]; then git add wx.json; fi
           if git diff --cached --quiet; then
             echo "no change"
           else
