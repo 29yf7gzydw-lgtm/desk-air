@@ -90,19 +90,22 @@
     #clock { font-size:33px; }
   }
 
-  /* short viewports (e.g. landscape tablet): squeeze so the whole weather
-     screen stays on one screen — the chart height is read by JS, so it
-     follows this automatically */
-  @media (max-height:820px) {
-    body { padding-top:6px; }
-    #hl { font-size:29px; }
-    #tHigh { font-size:64px; }
-    #dist { height:165px; }
-    .mbig { font-size:31px; }
-    .nhTc { font-size:23px; }
-    .hval { font-size:21px; }
-    #clock { font-size:33px; }
-    .rule { margin:5px 0; }
+  /* landscape (the desk orientation): use the width — NEXT HOURS and ALMANAC
+     sit side by side in one row, almanac wraps to 3x2 — so the whole screen
+     fits the short viewport without scrolling. The chart height is read by
+     JS from CSS, so it follows automatically. */
+  @media (orientation:landscape) and (max-height:900px) {
+    body { padding-top:8px; }
+    #hl { font-size:31px; }
+    #tHigh { font-size:70px; }
+    #dist { height:192px; }
+    .mbig { font-size:33px; }
+    .nhTc { font-size:24px; }
+    #lowerRow { display:-webkit-flex; display:flex; width:100%; }
+    #secNext { -webkit-flex:1.35; flex:1.35; padding-right:28px; }
+    #secAlm { -webkit-flex:1; flex:1; }
+    #secAlm .hcols.alm { -webkit-flex-wrap:wrap; flex-wrap:wrap; }
+    #secAlm .hcols.alm .hcol { -webkit-flex:0 0 33.33%; flex:0 0 33.33%; margin-bottom:6px; }
   }
 
   #quoteview { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#fff; z-index:40; text-align:center; }
@@ -172,20 +175,25 @@
     <div class="hcol"><div class="hlab">Coolest</div><div class="hval num" id="hCool">--</div></div>
   </div>
 
-  <div class="rule"></div>
-  <div class="stitle" id="nhTitle">NEXT HOURS</div>
-  <div id="nhSum">…</div>
-  <div id="nhStrip"></div>
-
-  <div class="rule"></div>
-  <div class="stitle">ALMANAC</div>
-  <div class="hcols alm">
-    <div class="hcol"><div class="hlab">Sunrise</div><div class="hval num" id="aSunrise">--</div></div>
-    <div class="hcol"><div class="hlab">Sunset</div><div class="hval num" id="aSunset">--</div></div>
-    <div class="hcol"><div class="hlab" id="aUVlab">UV max</div><div class="hval num" id="aUV">--</div></div>
-    <div class="hcol"><div class="hlab">Feels like</div><div class="hval num" id="aFeels">--</div></div>
-    <div class="hcol"><div class="hlab">Humidity</div><div class="hval num" id="aHum">--</div></div>
-    <div class="hcol"><div class="hlab">Wind</div><div class="hval num" id="aWind">--</div></div>
+  <div id="lowerRow">
+    <div class="secBlock" id="secNext">
+      <div class="rule"></div>
+      <div class="stitle" id="nhTitle">NEXT HOURS</div>
+      <div id="nhSum">…</div>
+      <div id="nhStrip"></div>
+    </div>
+    <div class="secBlock" id="secAlm">
+      <div class="rule"></div>
+      <div class="stitle">ALMANAC</div>
+      <div class="hcols alm">
+        <div class="hcol"><div class="hlab">Sunrise</div><div class="hval num" id="aSunrise">--</div></div>
+        <div class="hcol"><div class="hlab">Sunset</div><div class="hval num" id="aSunset">--</div></div>
+        <div class="hcol"><div class="hlab" id="aUVlab">UV max</div><div class="hval num" id="aUV">--</div></div>
+        <div class="hcol"><div class="hlab">Feels like</div><div class="hval num" id="aFeels">--</div></div>
+        <div class="hcol"><div class="hlab">Humidity</div><div class="hval num" id="aHum">--</div></div>
+        <div class="hcol"><div class="hlab">Wind</div><div class="hval num" id="aWind">--</div></div>
+      </div>
+    </div>
   </div>
 
   <div id="footer">
