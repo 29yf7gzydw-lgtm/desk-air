@@ -170,6 +170,10 @@
     #qAuthor { font-size:18px; }
     #qDate { margin-top:8px; font-size:13px; }
     #quoteview .qHint { bottom:14px; }
+    #distcol #histTitle { font-size:11px; letter-spacing:1px; margin-top:6px; }
+    #distcol .hcols { margin-top:2px; }
+    #distcol .hcols .hlab { font-size:11px; }
+    #distcol .hcols .hval { font-size:16px; }
     #artview img { object-position:50% 22%; transform:scale(1.1); transform-origin:50% 22%; }
   }</style>
 </head>
@@ -220,15 +224,14 @@
     <div id="distcol">
       <div id="distTitle">HIGHS DISTRIBUTION · Since 1940</div>
       <div id="dist"></div>
+      <div class="rule"></div>
+      <div id="histTitle">HIGHS IN HISTORY</div>
+      <div class="hcols">
+        <div class="hcol"><div class="hlab">Normal</div><div class="hval num" id="hNorm">--</div></div>
+        <div class="hcol"><div class="hlab">Warmest</div><div class="hval num" id="hWarm">--</div></div>
+        <div class="hcol"><div class="hlab">Coolest</div><div class="hval num" id="hCool">--</div></div>
+      </div>
     </div>
-  </div>
-
-  <div class="rule"></div>
-  <div id="histTitle">HIGHS IN HISTORY</div>
-  <div class="hcols">
-    <div class="hcol"><div class="hlab">Normal</div><div class="hval num" id="hNorm">--</div></div>
-    <div class="hcol"><div class="hlab">Warmest</div><div class="hval num" id="hWarm">--</div></div>
-    <div class="hcol"><div class="hlab">Coolest</div><div class="hval num" id="hCool">--</div></div>
   </div>
 
   <div id="lowerRow">
@@ -875,5 +878,6 @@ setTimeout(function(){
 </script>
 </body>
 </html>
+
 
 
