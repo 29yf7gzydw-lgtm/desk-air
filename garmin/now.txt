@@ -1,0 +1,6 @@
+NOW 28.1C
+HI 33.8 LO 26.3
+RAIN 1.9MM TODAY
+--------------------
+WX 00:00 27 OCT
+TMD NWP FORECAST
