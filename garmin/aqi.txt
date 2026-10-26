@@ -1,0 +1,6 @@
+PM2.5 20 UG/M3
+US AQI 67
+MODERATE
+--------------------
+STN 0.6KM AWAY
+AIR 23:00 26 OCT
