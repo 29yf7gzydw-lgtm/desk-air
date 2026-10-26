@@ -1,0 +1,7 @@
+- wx,Weather
+-- now,Now,https://29yf7gzydw-lgtm.github.io/desk-air/garmin/now.txt
+-- next3,Next 3H,https://29yf7gzydw-lgtm.github.io/desk-air/garmin/next3.txt
+-- aqi,AQI,https://29yf7gzydw-lgtm.github.io/desk-air/garmin/aqi.txt
+-- cmp,Vs Normal,https://29yf7gzydw-lgtm.github.io/desk-air/garmin/compare.txt
+-- all,All in One,https://29yf7gzydw-lgtm.github.io/desk-air/garmin/all.txt
+- nap,Napoleon,https://29yf7gzydw-lgtm.github.io/desk-air/garmin/napoleon.txt
