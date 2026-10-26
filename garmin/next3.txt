@@ -5,4 +5,4 @@ NEXT 3H - TMD
 --------------------
 RAIN FROM 03:00
 HEAVIEST 0.5MM
-WX 02:03 27 OCT
+WX 02:33 27 OCT
