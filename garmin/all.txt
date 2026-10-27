@@ -7,11 +7,11 @@ NEXT 3H - TMD
 01:00 28.2C OVERCAST
 02:00 28.0C OVERCAST
 --------------------
-PM2.5 25 AQI 78
+PM2.5 25 AQI 79
 MODERATE
 --------------------
 HI VS NORM
 29.4-31.2 ABOVE
 --------------------
-WX 23:03 27 OCT
-AIR 22:00 27 OCT
+WX 23:33 27 OCT
+AIR 23:00 27 OCT
