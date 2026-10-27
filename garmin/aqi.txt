@@ -3,4 +3,4 @@ US AQI 78
 MODERATE
 --------------------
 STN 0.6KM AWAY
-AIR 21:00 27 OCT
+AIR 22:00 27 OCT
