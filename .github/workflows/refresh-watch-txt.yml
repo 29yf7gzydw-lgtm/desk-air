@@ -5,8 +5,8 @@ name: Refresh watch text files
 # No secrets needed: wx.json is read from the repo checkout, CAMS + UV + ERA5 need no key.
 #
 # Formats (TRMNL-style text, HttpClient shows text only):
-#   wx.txt:   Wx TMD / Bangkok / Now / Hi Lo / Rain / Next <COND_SHORT> /
-#             UV <max> max
+#   wx.txt:   <blank> / <blank> / Now / Hi Lo / Rain / Next <COND_SHORT> /
+#             Rain <t> <mm>mm (or No rain 6h) / Rain chance <max>% / UV <max> max
 #   aqi.txt:  AQI PM25 / Bangkok / PM2.5 <v> AQI <n> / 1 <tc>C <WORD> / 2 ... / 3 ...
 #   hist.txt: <blank> / <blank> / <Mon dd> Rank <r>/40 /
 #             Warmest since <YYYY> (or Warmest in 40yr) / Avg max <v>C /
@@ -43,6 +43,7 @@ jobs:
           python3 - <<'PY'
           import json, urllib.request
           from datetime import datetime, timezone, timedelta
+          bkk_now = datetime.now(timezone(timedelta(hours=7)))
           with open("wx.json", encoding="utf-8") as f:
               wx = json.load(f)
           url = ("https://air-quality-api.open-meteo.com/v1/air-quality"
@@ -74,10 +75,31 @@ jobs:
                   9: "V.COLD", 10: "COLD", 11: "COOL", 12: "V.HOT"}
           nxt = wx["next"]
           assert len(nxt) >= 3, "wx.json next[] has fewer than 3 hours"
-          wx_txt = (f"Wx TMD\nBangkok\n"
+          # First rainy hour in TMD next[] (rain unused until now)
+          rainy = next((h for h in nxt if float(h.get("rain", 0)) >= 0.1), None)
+          rain_next = (f"Rain {rainy['t']} {float(rainy['rain']):.1f}mm"
+                       if rainy else "No rain 6h")
+          # Max precipitation probability over the next 6 hours (Open-Meteo, no key)
+          try:
+              pop_url = ("https://api.open-meteo.com/v1/forecast"
+                         "?latitude=13.7568&longitude=100.53"
+                         "&hourly=precipitation_probability"
+                         "&timezone=Asia%2FBangkok&forecast_days=2")
+              with urllib.request.urlopen(pop_url, timeout=30) as r:
+                  pop = json.load(r)
+              ptimes = pop["hourly"]["time"]
+              pvals = pop["hourly"]["precipitation_probability"]
+              cur = bkk_now.strftime("%Y-%m-%dT%H:00")
+              i0 = ptimes.index(cur)
+              vals6 = [p for p in pvals[i0 + 1:i0 + 7] if p is not None]
+              chance = f"Rain chance {max(vals6)}%" if vals6 else "Rain chance --"
+          except Exception:
+              chance = "Rain chance --"
+          wx_txt = (f"\n\n"
                     f"Now {f1(wx['now'])}C\nHi {f1(wx['hi'])}C Lo {f1(wx['lo'])}C\n"
                     f"Rain {f1(wx['rain'])}mm\n"
-                    f"Next {COND.get(nxt[0]['cond'], '?')}\n{uv_line}\n")
+                    f"Next {COND.get(nxt[0]['cond'], '?')}\n"
+                    f"{rain_next}\n{chance}\n{uv_line}\n")
           aqi_txt = (f"AQI PM25\nBangkok\n"
                      f"PM2.5 {f1(pm25)} AQI {aqi}\n"
                      f"1 {f1(nxt[0]['tc'])}C {COND.get(nxt[0]['cond'], '?')}\n"
