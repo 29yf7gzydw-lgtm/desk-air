@@ -2,7 +2,14 @@ name: Refresh watch text files
 
 # Refreshes ONLY wx.txt and aqi.txt for the Instinct 2 HttpClient Base URL setup.
 # Touches nothing else: never wx.json, index.html, endpoints, or any secret.
-# No secrets needed: wx.json is read from the repo checkout, CAMS needs no key.
+# No secrets needed: wx.json is read from the repo checkout, CAMS + UV need no key.
+#
+# Formats (TRMNL-style text, HttpClient shows text only):
+#   wx.txt:  Now / Hi Lo / Rain / Next <COND_SHORT> / UV <max> max
+#   aqi.txt: PM2.5 <v> AQI <n> / 1 <tc>C <WORD> / 2 ... / 3 ...
+# COND_SHORT follows desk-air index.html (1 CLEAR, 2 P.CLOUDY, 3 CLOUDY,
+# 4 OVERCAST, 5 L.RAIN, 6 RAIN, 7 H.RAIN, 8 STORM, 9 V.COLD, 10 COLD,
+# 11 COOL, 12 V.HOT).
 
 on:
   schedule:
@@ -36,13 +43,29 @@ jobs:
               if pm25 <= chi:
                   aqi = round((ihi - ilo) / (chi - clo) * (pm25 - clo) + ilo)
                   break
+          try:
+              uv_url = ("https://api.open-meteo.com/v1/forecast"
+                        "?latitude=13.7568&longitude=100.53&daily=uv_index_max"
+                        "&timezone=Asia%2FBangkok&forecast_days=1")
+              with urllib.request.urlopen(uv_url, timeout=30) as r:
+                  uv = json.load(r)["daily"]["uv_index_max"][0]
+              uv_line = f"UV {float(uv):.1f} max"
+          except Exception:
+              uv_line = "UV -- max"
           def f1(v):
               return f"{float(v):.1f}"
+          COND = {1: "CLEAR", 2: "P.CLOUDY", 3: "CLOUDY", 4: "OVERCAST",
+                  5: "L.RAIN", 6: "RAIN", 7: "H.RAIN", 8: "STORM",
+                  9: "V.COLD", 10: "COLD", 11: "COOL", 12: "V.HOT"}
           nxt = wx["next"]
           assert len(nxt) >= 3, "wx.json next[] has fewer than 3 hours"
-          wx_txt = f"Now {f1(wx['now'])}C\nHi {f1(wx['hi'])}C Lo {f1(wx['lo'])}C\nRain {f1(wx['rain'])}mm\n"
+          wx_txt = (f"Now {f1(wx['now'])}C\nHi {f1(wx['hi'])}C Lo {f1(wx['lo'])}C\n"
+                    f"Rain {f1(wx['rain'])}mm\n"
+                    f"Next {COND.get(nxt[0]['cond'], '?')}\n{uv_line}\n")
           aqi_txt = (f"PM2.5 {f1(pm25)} AQI {aqi}\n"
-                     f"1 {f1(nxt[0]['tc'])}C\n2 {f1(nxt[1]['tc'])}C\n3 {f1(nxt[2]['tc'])}C\n")
+                     f"1 {f1(nxt[0]['tc'])}C {COND.get(nxt[0]['cond'], '?')}\n"
+                     f"2 {f1(nxt[1]['tc'])}C {COND.get(nxt[1]['cond'], '?')}\n"
+                     f"3 {f1(nxt[2]['tc'])}C {COND.get(nxt[2]['cond'], '?')}\n")
           open("wx.txt", "w", encoding="utf-8").write(wx_txt)
           open("aqi.txt", "w", encoding="utf-8").write(aqi_txt)
           print(wx_txt + aqi_txt)
