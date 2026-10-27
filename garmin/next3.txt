@@ -3,4 +3,4 @@ NEXT 3H - TMD
 17:00 32.7C CLEAR
 18:00 32.4C P.CLOUDY
 --------------------
-WX 15:10 27 OCT
+WX 15:32 27 OCT
