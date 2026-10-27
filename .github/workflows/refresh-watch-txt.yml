@@ -7,8 +7,8 @@ name: Refresh watch text files
 # Formats (TRMNL-style text, HttpClient shows text only):
 #   wx.txt:   <blank> / <blank> / Now / Hi Lo / Rain / Next <COND_SHORT> /
 #             Rain <t> <mm>mm (or No rain 6h) / Rain chance <max>% / UV <max> max
-#   aqi.txt:  AQI PM25 / Bangkok / PM2.5 <v> AQI <n> / 1 <tc>C <WORD> / 2 ... / 3 ...
-#   hist.txt: <blank> / <blank> / <Mon dd> Rank <r>/40 /
+#   aqi.txt:  <blank> / <blank> / PM2.5 <v> AQI <n> / 1 <tc>C <WORD> / 2 ... / 3 ...
+#   hist.txt: <blank> / <blank> / <Mon dd> /
 #             Warmest since <YYYY> (or Warmest in 40yr) / Avg max <v>C /
 #             Today <hi>C <+/-><d> / Record <v>C <YYYY> / Coldest <v>C <YYYY>
 #   hist compares today's TMD max (wx.json hi) with ERA5 daily maxima for the
@@ -100,7 +100,7 @@ jobs:
                     f"Rain {f1(wx['rain'])}mm\n"
                     f"Next {COND.get(nxt[0]['cond'], '?')}\n"
                     f"{rain_next}\n{chance}\n{uv_line}\n")
-          aqi_txt = (f"AQI PM25\nBangkok\n"
+          aqi_txt = (f"\n\n"
                      f"PM2.5 {f1(pm25)} AQI {aqi}\n"
                      f"1 {f1(nxt[0]['tc'])}C {COND.get(nxt[0]['cond'], '?')}\n"
                      f"2 {f1(nxt[1]['tc'])}C {COND.get(nxt[1]['cond'], '?')}\n"
@@ -132,7 +132,7 @@ jobs:
               rec_y = max(w40, key=w40.get)
               cold_y = min(w40, key=w40.get)
               hist_txt = (f"\n\n"
-                          f"{bkk.strftime('%b %d')} Rank {rank}/{len(w40)}\n"
+                          f"{bkk.strftime('%b %d')}\n"
                           f"{verdict}\n"
                           f"Avg max {avg40:.1f}C\n"
                           f"Today {today_max:.1f}C {today_max - avg40:+.1f}\n"
