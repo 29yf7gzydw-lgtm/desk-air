@@ -1,4 +1,4 @@
-NOW 32.5C
+NOW 33.2C
 HI 33.2 LO 25.1
 RAIN 0.0MM
 --------------------
@@ -13,5 +13,5 @@ MODERATE
 HI VS NORM
 29.4-31.2 ABOVE
 --------------------
-WX 15:10 27 OCT
-AIR 14:00 27 OCT
+WX 15:32 27 OCT
+AIR 15:00 27 OCT
