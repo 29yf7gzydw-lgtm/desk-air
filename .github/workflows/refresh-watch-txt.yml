@@ -1,0 +1,60 @@
+name: Refresh watch text files
+
+# Refreshes ONLY wx.txt and aqi.txt for the Instinct 2 HttpClient Base URL setup.
+# Touches nothing else: never wx.json, index.html, endpoints, or any secret.
+# No secrets needed: wx.json is read from the repo checkout, CAMS needs no key.
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate wx.txt and aqi.txt
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request
+          with open("wx.json", encoding="utf-8") as f:
+              wx = json.load(f)
+          url = ("https://air-quality-api.open-meteo.com/v1/air-quality"
+                 "?latitude=13.7568&longitude=100.53&current=pm2_5&timezone=Asia%2FBangkok")
+          with urllib.request.urlopen(url, timeout=30) as r:
+              aq = json.load(r)
+          pm25 = float(aq["current"]["pm2_5"])
+          bps = [(0.0, 12.0, 0, 50), (12.1, 35.4, 51, 100), (35.5, 55.4, 101, 150),
+                 (55.5, 150.4, 151, 200), (150.5, 250.4, 201, 300), (250.5, 350.4, 301, 400),
+                 (350.5, 500.4, 401, 500)]
+          aqi = 500
+          for clo, chi, ilo, ihi in bps:
+              if pm25 <= chi:
+                  aqi = round((ihi - ilo) / (chi - clo) * (pm25 - clo) + ilo)
+                  break
+          def f1(v):
+              return f"{float(v):.1f}"
+          nxt = wx["next"]
+          assert len(nxt) >= 3, "wx.json next[] has fewer than 3 hours"
+          wx_txt = f"Now {f1(wx['now'])}C\nHi {f1(wx['hi'])}C Lo {f1(wx['lo'])}C\nRain {f1(wx['rain'])}mm\n"
+          aqi_txt = (f"PM2.5 {f1(pm25)} AQI {aqi}\n"
+                     f"1 {f1(nxt[0]['tc'])}C\n2 {f1(nxt[1]['tc'])}C\n3 {f1(nxt[2]['tc'])}C\n")
+          open("wx.txt", "w", encoding="utf-8").write(wx_txt)
+          open("aqi.txt", "w", encoding="utf-8").write(aqi_txt)
+          print(wx_txt + aqi_txt)
+          PY
+      - name: Commit and push if changed
+        run: |
+          git config user.name "watch-txt-bot"
+          git config user.email "watch-txt-bot@users.noreply.github.com"
+          git add wx.txt aqi.txt
+          if git diff --cached --quiet; then
+            echo "no changes"
+          else
+            git commit -m "Refresh watch wx.txt/aqi.txt"
+            git push
+          fi
