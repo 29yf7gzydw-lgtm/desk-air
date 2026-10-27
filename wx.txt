@@ -1,0 +1,3 @@
+Now 33.2C
+Hi 33.2C Lo 25.1C
+Rain 0.0mm
