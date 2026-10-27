@@ -1,4 +1,4 @@
-NOW 32.5C
+NOW 33.5C
 HI 34.2 LO 27.0
 RAIN 0.5MM
 --------------------
@@ -7,11 +7,11 @@ NEXT 3H - TMD
 19:00 31.1C CLOUDY
 20:00 30.7C OVERCAST
 --------------------
-PM2.5 25 AQI 77
+PM2.5 25 AQI 78
 MODERATE
 --------------------
 HI VS NORM
 29.4-31.2 ABOVE
 --------------------
-WX 17:03 27 OCT
-AIR 16:00 27 OCT
+WX 17:33 27 OCT
+AIR 17:00 27 OCT
