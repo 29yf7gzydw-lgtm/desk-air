@@ -1,5 +1,5 @@
-AQI PM25
-Bangkok
+
+
 PM2.5 17.5 AQI 62
 1 33.2C CLEAR
 2 32.7C CLEAR
