@@ -8,7 +8,7 @@ name: Refresh watch text files
 #   wx.txt:   Wx TMD / Bangkok / Now / Hi Lo / Rain / Next <COND_SHORT> /
 #             UV <max> max
 #   aqi.txt:  AQI PM25 / Bangkok / PM2.5 <v> AQI <n> / 1 <tc>C <WORD> / 2 ... / 3 ...
-#   hist.txt: Comparative / vs 40 years / <Mon dd> Rank <r>/40 /
+#   hist.txt: <blank> / <blank> / <Mon dd> Rank <r>/40 /
 #             Warmest since <YYYY> (or Warmest in 40yr) / Avg max <v>C /
 #             Today <hi>C <+/-><d> / Record <v>C <YYYY> / Coldest <v>C <YYYY>
 #   hist compares today's TMD max (wx.json hi) with ERA5 daily maxima for the
@@ -17,8 +17,10 @@ name: Refresh watch text files
 #   Layout note (from real watch photos): HttpClient centers every line and
 #   its circle overlay sits over the top-right, hiding the ends of the first
 #   ~2 lines (even a 6-char line lost its last char). Alignment cannot be set
-#   from the text, so rows 1-2 hold only the title + context (clipping there
-#   is harmless) and date + rank sit at row 3, below the circle's reach.
+#   from the text, and the user rejected title/context header rows, so rows
+#   1-2 are blank (the circle covers nothing) and date + rank sit at row 3,
+#   below the circle's reach. This relies on the app preserving blank lines;
+#   if it collapses them, date + rank shift up into the clip zone again.
 # COND_SHORT follows desk-air index.html (1 CLEAR, 2 P.CLOUDY, 3 CLOUDY,
 # 4 OVERCAST, 5 L.RAIN, 6 RAIN, 7 H.RAIN, 8 STORM, 9 V.COLD, 10 COLD,
 # 11 COOL, 12 V.HOT).
@@ -107,8 +109,7 @@ jobs:
                          else "Warmest in 40yr")
               rec_y = max(w40, key=w40.get)
               cold_y = min(w40, key=w40.get)
-              hist_txt = (f"Comparative\n"
-                          f"vs 40 years\n"
+              hist_txt = (f"\n\n"
                           f"{bkk.strftime('%b %d')} Rank {rank}/{len(w40)}\n"
                           f"{verdict}\n"
                           f"Avg max {avg40:.1f}C\n"
