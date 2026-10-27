@@ -1,7 +1,9 @@
-Wx TMD
-Bangkok
-Now 32.5C
+
+
+Now 33.2C
 Hi 33.2C Lo 25.1C
 Rain 0.0mm
 Next CLEAR
+No rain 6h
+Rain chance 76%
 UV 7.9 max
