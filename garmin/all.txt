@@ -1,4 +1,4 @@
-NOW 33.4C
+NOW 33.6C
 HI 34.1 LO 24.4
 RAIN 0.0MM
 --------------------
@@ -7,11 +7,11 @@ NEXT 3H - TMD
 15:00 34.0C CLEAR
 16:00 33.4C CLEAR
 --------------------
-PM2.5 24 AQI 76
+PM2.5 24 AQI 75
 MODERATE
 --------------------
 HI VS NORM
 29.7-31.0 ABOVE
 --------------------
-WX 13:00 28 OCT
-AIR 12:00 28 OCT
+WX 13:30 28 OCT
+AIR 13:00 28 OCT
