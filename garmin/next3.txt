@@ -3,4 +3,4 @@ NEXT 3H - TMD
 15:00 34.0C CLEAR
 16:00 33.4C CLEAR
 --------------------
-WX 13:00 28 OCT
+WX 13:30 28 OCT
