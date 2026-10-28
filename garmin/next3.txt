@@ -3,4 +3,4 @@ NEXT 3H - TMD
 08:00 27.0C P.CLOUDY
 09:00 27.4C CLOUDY
 --------------------
-WX 06:27 28 OCT
+WX 06:30 28 OCT
