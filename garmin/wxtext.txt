@@ -1,5 +1,5 @@
 PHAYA THAI
-NOW 26.3C
+NOW 24.0C
 HI 33.8 LO 24.0
 RAIN 0.0MM
 --------------------
@@ -14,5 +14,5 @@ MODERATE
 HI VS NORM
 29.7-31.0 ABOVE
 --------------------
-WX 06:27 28 OCT
+WX 06:30 28 OCT
 AIR 06:00 28 OCT
