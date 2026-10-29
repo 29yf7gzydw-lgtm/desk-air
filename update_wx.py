@@ -40,7 +40,7 @@ def main():
     now = datetime.now(ICT)
     today = now.strftime("%Y-%m-%d")
     tomorrow = (now.fromtimestamp(now.timestamp() + 86400, ICT)).strftime("%Y-%m-%d")
-    hourly = get_json("%s/hourly/at?lat=%s&lon=%s&fields=tc,rain,cond"
+    hourly = get_json("%s/hourly/at?lat=%s&lon=%s&fields=tc,rh,ws10m,wd10m,rain,cond"
                       "&date=%s&hour=0&duration=24" % (BASE, LAT, LNG, today))
     hourly2 = get_json("%s/hourly/at?lat=%s&lon=%s&fields=tc,rain,cond"
                        "&date=%s&hour=0&duration=9" % (BASE, LAT, LNG, tomorrow))
@@ -54,7 +54,7 @@ def main():
         print("no hourly forecasts")
         return 1
 
-    now_tc, best_gap = None, None
+    now_tc, now_rh, now_ws, now_wd, best_gap = None, None, None, None, None
     rain = 0.0
     tcs = []
     for e in fc:
@@ -65,6 +65,9 @@ def main():
             gap = abs((t - now).total_seconds())
             if best_gap is None or gap < best_gap:
                 now_tc, best_gap = d["tc"], gap
+                now_rh = d.get("rh")
+                now_ws = d.get("ws10m")
+                now_wd = d.get("wd10m")
         if d.get("rain"):
             rain += d["rain"]
 
@@ -106,6 +109,9 @@ def main():
         "glat": loc.get("lat"),
         "glon": loc.get("lon"),
         "now": round(now_tc, 1),
+        "now_rh": (round(now_rh, 1) if now_rh is not None else None),
+        "now_ws": (round(now_ws, 2) if now_ws is not None else None),
+        "now_wd": (round(now_wd, 1) if now_wd is not None else None),
         "hi": round(hi, 1),
         "lo": round(lo, 1),
         "rain": round(rain, 1),
