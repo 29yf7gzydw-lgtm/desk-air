@@ -21,7 +21,8 @@
   #clock { font-size:40px; font-weight:700; line-height:1; }
   #dateline { font-size:19px; font-weight:600; margin-left:14px; letter-spacing:1px; }
   #topR { -webkit-flex:1; flex:1; text-align:right; font-size:20px; font-weight:600; }
-  #topR b { font-size:26px; }
+  #topR b { font-size:44px; }
+  #nowSub { display:block; font-size:15px; font-weight:600; color:#222; margin-top:2px; }
 
   /* headline */
   #hl { font-size:37px; font-weight:800; letter-spacing:0.5px; line-height:1.08; margin-top:4px; text-transform:uppercase; }
@@ -32,7 +33,7 @@
   #leftcol { -webkit-flex:1.25; flex:1.25; padding-right:30px; }
   #distcol { -webkit-flex:1; flex:1; }
   .lab { font-size:15px; font-weight:700; letter-spacing:2px; color:#111; }
-  #tHigh { font-size:82px; font-weight:700; line-height:0.95; }
+  #tHigh { font-size:64px; font-weight:700; line-height:0.95; }
   #tRec { font-size:17px; font-weight:700; letter-spacing:1px; margin-top:2px; }
   .tsub { font-size:19px; color:#222; line-height:1.35; }
   #distTitle { font-size:14px; font-weight:700; letter-spacing:1px; color:#111; text-align:right; }
@@ -134,7 +135,7 @@
 
   <div id="topbar">
     <div><span id="clock" class="num">--:--</span><span id="dateline">…</span></div>
-    <div id="topR">NOW <b class="num" id="nowTemp">--°</b> · PM2.5 <b class="num" id="nowPm">--</b> · AQI <b class="num" id="nowAqi">--</b></div>
+    <div id="topR">NOW <b class="num" id="nowTemp">--°</b> · PM2.5 <b class="num" id="nowPm">--</b> · AQI <b class="num" id="nowAqi">--</b><span id="nowSub">Feels -- · Hum -- · Wind --</span></div>
   </div>
 
   <div id="hl">IS THIS WEATHER NORMAL?</div>
@@ -148,13 +149,9 @@
       <div id="tRec"></div>
       <div class="tsub">Low <span id="tLow">--</span>°</div>
       <div class="tsub" id="tRain">--mm rain likely</div>
+      <div class="tsub" id="yLine">Yesterday --</div>
       <div class="rule"></div>
       <div class="cols">
-        <div class="mcol">
-          <div class="lab">YESTERDAY</div>
-          <div class="mbig num" id="yHigh">--°</div>
-          <div class="msub" id="yVerdict">…</div>
-        </div>
         <div class="mcol">
           <div class="lab">LAST 30 DAYS</div>
           <div class="mbig num" id="mDiff">--</div>
@@ -236,6 +233,36 @@ function getJSON(url, done, fail){
   x.send();
 }
 
+
+/* ---------- NOW primary block + freshness (2026-10-29) ---------- */
+var nowRainChance = null, airFreshTxt = "", wxFreshTxt = "";
+function fmtHHMM(ts){ var d = new Date(ts*1000); return pad(d.getHours()) + ":" + pad(d.getMinutes()); }
+function renderNowSub(){
+  var feels = el("aFeels").innerHTML, hum = el("aHum").innerHTML, wind = el("aWind").innerHTML;
+  var t = "Feels " + feels + " · Hum " + hum + " · Wind " + wind;
+  if (nowRainChance!==null) t += " · Rain chance " + nowRainChance + "% next 6h";
+  var fresh = [];
+  if (wxFreshTxt) fresh.push("TMD " + wxFreshTxt);
+  if (airFreshTxt) fresh.push("Air " + airFreshTxt);
+  if (fresh.length) t += " · as of " + fresh.join(" / ");
+  el("nowSub").innerHTML = t;
+}
+function loadRainChance(){
+  if (!havePos) return;
+  var url = "https://api.open-meteo.com/v1/forecast?latitude="+curLat+"&longitude="+curLon+"&hourly=precipitation_probability&timezone=Asia%2FBangkok&forecast_days=1";
+  getJSON(url, function(j){
+    if (j && j.hourly && j.hourly.time && j.hourly.precipitation_probability){
+      var nowD = new Date(), mx = 0, i;
+      for (i=0;i<j.hourly.time.length;i++){
+        var td = new Date(j.hourly.time[i]);
+        if (td.getTime() >= nowD.getTime() - 3600000 && td.getTime() < nowD.getTime() + 6*3600000){
+          if (j.hourly.precipitation_probability[i]!==null && j.hourly.precipitation_probability[i]>mx) mx = j.hourly.precipitation_probability[i];
+        }
+      }
+      nowRainChance = mx; renderNowSub();
+    }
+  }, function(){});
+}
 function loadNow(){
   if (!havePos) return;
   /* Source per variable (2026-10-24): current + forecast are pinned to ECMWF IFS —
@@ -254,6 +281,7 @@ function loadNow(){
       if (c.relative_humidity_2m!==null && c.relative_humidity_2m!==undefined) el("aHum").innerHTML = Math.round(c.relative_humidity_2m) + "%";
       if (c.wind_speed_10m!==null && c.wind_speed_10m!==undefined) el("aWind").innerHTML = Math.round(c.wind_speed_10m) + " km/h " + compass(c.wind_direction_10m);
     }
+    renderNowSub();
   };
   getJSON(base+"&models=ecmwf_ifs025", function(j){
     if (j && j.current && j.current.temperature_2m!==null && j.current.temperature_2m!==undefined) show(j);
@@ -270,6 +298,7 @@ function useAir(j){
   if (j.pm!==null && j.pm!==undefined && age >= 0 && age < 6*3600){
     el("nowPm").innerHTML = j.pm;
     el("nowAqi").innerHTML = (j.aqi!==null && j.aqi!==undefined) ? j.aqi : "--";
+    airFreshTxt = fmtHHMM(j.ts); renderNowSub();
     return true;
   }
   return false;
@@ -310,6 +339,7 @@ function useWx(j){
   if (!havePos || j.glat===null || j.glat===undefined) return false;
   if (distKm(curLat, curLon, j.glat, j.glon) > 8) return false;
   wxToday = j;
+  wxFreshTxt = fmtHHMM(j.ts); renderNowSub();
   el("nowTemp").innerHTML = Math.round(j.now) + "°";
   if (j.now_rh!==null && j.now_rh!==undefined) el("aHum").innerHTML = Math.round(j.now_rh) + "%";
   if (j.now_ws!==null && j.now_ws!==undefined) el("aWind").innerHTML = Math.round(j.now_ws * 3.6) + " km/h " + compass(j.now_wd);
@@ -319,6 +349,7 @@ function useWx(j){
     var atT = tcT + 0.33 * eT - 0.70 * wsT - 4.0;
     el("aFeels").innerHTML = Math.round(atT) + "°";
   }
+  renderNowSub();
   applyWxToday();
   if (j.next && j.next.length) renderNextHours(j.next, "TMD");
   return true;
@@ -419,10 +450,14 @@ function loadNextFallback(){
   run(base + "&models=ecmwf_ifs025", true);
 }
 function uvLabel(uv){ return uv<=2 ? "Low" : uv<=7 ? "Average" : uv<=10 ? "Very High" : "Extreme"; }
+var uvNowVal = null, uvMaxVal = null;
+function renderUV(){
+  if (uvNowVal!==null){ el("aUV").innerHTML = uvNowVal; el("aUVlab").innerHTML = "UV now · " + uvLabel(uvNowVal) + (uvMaxVal!==null ? " · max " + uvMaxVal : ""); }
+  else if (uvMaxVal!==null){ el("aUV").innerHTML = uvMaxVal; el("aUVlab").innerHTML = "UV max · " + uvLabel(uvMaxVal); }
+}
 function setUV(v, isNow){
-  var uv = Math.round(v);
-  el("aUV").innerHTML = uv;
-  el("aUVlab").innerHTML = (isNow ? "UV now · " : "UV max · ") + uvLabel(uv);
+  if (isNow) uvNowVal = Math.round(v); else uvMaxVal = Math.round(v);
+  renderUV();
 }
 function loadUVMax(){
   var url = "https://api.open-meteo.com/v1/forecast?latitude="+curLat+"&longitude="+curLon+
@@ -443,7 +478,7 @@ function loadUV(){
         var diff = Math.abs(td.getTime() - nowD.getTime());
         if (diff < bestDiff){ bestDiff = diff; best = i; }
       }
-      if (best >= 0 && j.hourly.uv_index[best]!==null && j.hourly.uv_index[best]!==undefined){ setUV(j.hourly.uv_index[best], true); return; }
+      if (best >= 0 && j.hourly.uv_index[best]!==null && j.hourly.uv_index[best]!==undefined){ setUV(j.hourly.uv_index[best], true); loadUVMax(); return; }
     }
     loadUVMax();
   }, function(){ loadUVMax(); });
@@ -599,7 +634,7 @@ function renderStats(){
   renderDist(st);
   var stY = statsCache.stY;
   if (nYestHigh!==null && stY.n>0){
-    el("yVerdict").innerHTML = (nYestHigh < stY.p25) ? "A cool day" : (nYestHigh > stY.p75) ? "A warm day" : "A normal day";
+    if (nYestHigh!==null){ var yv = (nYestHigh < stY.p25) ? "a cool day" : (nYestHigh > stY.p75) ? "a warm day" : "a normal day"; el("yLine").innerHTML = "Yesterday " + round1(nYestHigh) + "\u00B0 — " + yv; }
   }
   var wn = statsCache.wn;
   if (wn && nAvg30!==null){
@@ -622,7 +657,8 @@ function loadHistory(){
     el("tRain").innerHTML = (d.precipitation_sum[n-1]===null ? "--" : round1(d.precipitation_sum[n-1])) + "mm rain likely";
     if (d.sunrise && d.sunrise[n-1]) el("aSunrise").innerHTML = (""+d.sunrise[n-1]).substring(11,16);
     if (d.sunset && d.sunset[n-1]) el("aSunset").innerHTML = (""+d.sunset[n-1]).substring(11,16);
-    el("yHigh").innerHTML = round1(nYestHigh) + "\u00B0";
+    /* Yesterday merged into a single line under Today (2026-10-29) */
+    el("yLine").innerHTML = "Yesterday " + round1(nYestHigh) + "\u00B0";
     var sh = 0, ch = 0, sr = 0;
     for (i=n-31;i<n-1;i++){
       if (d.temperature_2m_max[i]!==null){ sh += d.temperature_2m_max[i]; ch++; }
@@ -709,7 +745,7 @@ function applyPos(lat, lon){
   curLat = lat; curLon = lon; havePos = true;
   try { localStorage.setItem("deskPos", JSON.stringify({ lat: lat, lon: lon })); } catch(e){}
   el("fCoords").innerHTML = fmtCoord(lat, lon);
-  loadNow(); loadHistory(); loadWx(); loadNextFallback(); loadUV();
+  loadNow(); loadHistory(); loadWx(); loadNextFallback(); loadUV(); loadRainChance();
   var url = "https://api.bigdatacloud.net/data/reverse-geocode-client?latitude="+lat+"&longitude="+lon+"&localityLanguage=en";
   getJSON(url, function(j){
     var name = j.city || j.locality || j.principalSubdivision || "";
@@ -775,21 +811,73 @@ var QUOTES = [
   { q: "Diplomacy without arms is like music without instruments.", a: "Frederick the Great" }
 ];
 /* quote: ONE screen in the rotation; its content swaps to a fresh random quote every hour, on the clock */
-function renderQuote(idx){
-  var item = QUOTES[idx], now = new Date();
-  el("qText").innerHTML = "\u201C" + item.q + "\u201D";
-  el("qAuthor").innerHTML = item.a.toUpperCase();
+/* ---------- quote deck: 90-min slot, no repeat inside a deck, retire after 2 (2026-10-29) ----------
+   Pool = quotes.json if present (text/author/tags/source, all categories accepted except fraud,
+   usefulness first), otherwise the hardcoded QUOTES fallback. ?quote=<tag> filters by tag.
+   Deck is shuffled once per day with a date seed, stepped through by 90-min slot.
+   Seen counts live in localStorage; a quote with 2 exposures is skipped until every
+   other quote in the deck has also had 2, so a third exposure is never forced early. */
+var QUOTE_POOL = QUOTES;
+function quoteScope(){
+  try { var q = queryParam("quote"); return q ? q.toLowerCase() : ""; } catch(e){ return ""; }
+}
+function quotePoolFiltered(){
+  var scope = quoteScope(), out = [], i, j, t;
+  if (!scope) return QUOTE_POOL;
+  for (i=0;i<QUOTE_POOL.length;i++){
+    t = QUOTE_POOL[i].tags || [];
+    for (j=0;j<t.length;j++){ if (String(t[j]).toLowerCase().indexOf(scope) >= 0){ out.push(QUOTE_POOL[i]); break; } }
+  }
+  return out.length ? out : QUOTE_POOL;
+}
+function fnvHash(str){
+  var x = 2166136261, i;
+  for (i=0;i<str.length;i++){ x ^= str.charCodeAt(i); x = Math.imul(x, 16777619); }
+  return Math.abs(x);
+}
+function quoteDeck(pool){
+  var n = new Date(), seed = fnvHash("" + n.getFullYear() + "-" + (n.getMonth()+1) + "-" + n.getDate());
+  var arr = pool.slice(), i, j, tmp, s = seed || 1;
+  for (i=arr.length-1;i>0;i--){
+    s = (Math.imul(s, 1103515245) + 12345) & 2147483647;
+    j = s % (i+1); tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+  return arr;
+}
+function quoteKey(item){ return (item.a || "Unknown") + "|" + String(item.q || item.text || "").substring(0, 60); }
+function renderQuoteItem(item){
+  var now = new Date();
+  el("qText").innerHTML = "\u201C" + (item.q || item.text) + "\u201D";
+  el("qAuthor").innerHTML = String(item.a || item.author || "Unknown").toUpperCase();
   el("qDate").innerHTML = DOW[now.getDay()] + " " + now.getDate() + " " + MONS[now.getMonth()] + " " + now.getFullYear();
 }
-function hourlyQuoteIdx(){
-  var n = new Date();
-  var str = "" + n.getFullYear() * 1000000 + (n.getMonth() + 1) * 10000 + n.getDate() * 100 + n.getHours();
-  var x = 2166136261;
-  for (var i = 0; i < str.length; i++){ x ^= str.charCodeAt(i); x = Math.imul(x, 16777619); }
-  return Math.abs(x) % QUOTES.length;
-}
 function quoteOfDay(){
-  renderQuote(hourlyQuoteIdx());
+  var pool = quotePoolFiltered(), deck = quoteDeck(pool), slot = Math.floor(new Date().getTime() / (90*60*1000));
+  var state = null, seen = {};
+  try { state = JSON.parse(localStorage.getItem("deskQuoteState") || "null"); } catch(e){}
+  if (state && state.slot === slot && state.q){ renderQuoteItem({q: state.q, a: state.a}); return; }
+  try { seen = (state && state.seen) ? state.seen : {}; } catch(e){ seen = {}; }
+  var start = slot % deck.length, pick = null, k, idx;
+  for (k=0;k<deck.length;k++){
+    idx = (start + k) % deck.length;
+    if ((seen[quoteKey(deck[idx])] || 0) < 2){ pick = deck[idx]; break; }
+  }
+  if (!pick){ pick = deck[start]; seen = {}; }
+  var key = quoteKey(pick); seen[key] = (seen[key] || 0) + 1;
+  try { localStorage.setItem("deskQuoteState", JSON.stringify({slot: slot, q: pick.q || pick.text, a: pick.a || pick.author, seen: seen})); } catch(e){}
+  renderQuoteItem(pick);
+}
+function loadQuoteFile(){
+  var raw = "https://raw.githubusercontent.com/29yf7gzydw-lgtm/desk-air/main/quotes.json?cb=" + new Date().getTime();
+  var apply = function(j){
+    if (j && j.length){
+      var out = [], i;
+      for (i=0;i<j.length;i++){ out.push({q: j[i].text || j[i].q, a: j[i].author || j[i].a || "Unknown", tags: j[i].tags || []}); }
+      if (out.length) QUOTE_POOL = out;
+    }
+    quoteOfDay();
+  };
+  getJSON(raw, apply, function(){ getJSON("quotes.json", apply, function(){ quoteOfDay(); }); });
 }
 var screens = ["wrap", "quoteview", "artview"], curScreen = 0, rotTimer = null;
 function showScreen(n){
@@ -803,7 +891,7 @@ function restartRotation(){
 }
 function advanceScreen(){ showScreen((curScreen + 1) % screens.length); restartRotation(); }
 document.addEventListener("click", function(e){ if (e.target === el("footL")) return; advanceScreen(); }, false);
-quoteOfDay();
+loadQuoteFile();
 restartRotation();
 
 
@@ -840,7 +928,7 @@ tickClock();
 setInterval(tickClock, 10000);
 restorePos();
 locate();
-setInterval(function(){ locate(); loadNow(); loadWx(); loadNextFallback(); loadUV(); }, 15*60*1000);
+setInterval(function(){ locate(); loadNow(); loadWx(); loadNextFallback(); loadUV(); loadRainChance(); }, 15*60*1000);
 setTimeout(function(){
   var m = /[?&]note=([^&]*)/.exec(location.search);
   location.replace(location.pathname + "?v=" + new Date().getTime() + (m ? "&note=" + m[1] : ""));
