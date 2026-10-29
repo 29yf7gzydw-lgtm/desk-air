@@ -32,6 +32,9 @@
   #mainrow { display:-webkit-flex; display:flex; width:100%; }
   #leftcol { -webkit-flex:1.25; flex:1.25; padding-right:30px; }
   #distcol { -webkit-flex:1; flex:1; }
+  #daycurve { -webkit-flex:0.9; flex:0.9; padding:0 18px; }
+  #dayCanvas { width:100%; height:110px; display:block; }
+  #dayLab { font-size:13px; color:#222; margin-top:2px; }
   .lab { font-size:15px; font-weight:700; letter-spacing:2px; color:#111; }
   #tHigh { font-size:64px; font-weight:700; line-height:0.95; }
   #tRec { font-size:17px; font-weight:700; letter-spacing:1px; margin-top:2px; }
@@ -160,6 +163,11 @@
         </div>
       </div>
     </div>
+    <div id="daycurve">
+      <div class="lab" id="dayTitle">TODAY'S DAY CURVE</div>
+      <canvas id="dayCanvas" width="280" height="110"></canvas>
+      <div id="dayLab">…</div>
+    </div>
     <div id="distcol">
       <div id="distTitle">HIGHS DISTRIBUTION · Since 1940</div>
       <div id="dist"></div>
@@ -260,6 +268,38 @@ function loadRainChance(){
     }
   }, function(){});
 }
+
+/* ---------- Today's Day Curve (2026-10-29): TMD today hourly, Open-Meteo fallback ---------- */
+function renderDayCurve(day, src){
+  var c = el("dayCanvas"); if (!c || !day || day.length < 6) return;
+  el("dayTitle").innerHTML = "TODAY'S DAY CURVE · " + src;
+  var ctx = c.getContext("2d"), W = c.width, H = c.height, i, mn = 1e9, mx = -1e9, peak = null, nowIdx = -1, nowH = new Date().getHours();
+  for (i=0;i<day.length;i++){ if (day[i].tc < mn) mn = day[i].tc; if (day[i].tc > mx) mx = day[i].tc; if (!peak || day[i].tc > peak.tc) peak = day[i]; if (parseInt(day[i].t, 10) === nowH) nowIdx = i; }
+  if (mx - mn < 2) { mx = mn + 2; }
+  ctx.clearRect(0, 0, W, H);
+  ctx.strokeStyle = "#111"; ctx.lineWidth = 2; ctx.beginPath();
+  for (i=0;i<day.length;i++){
+    var x = 4 + i * (W - 8) / (day.length - 1);
+    var y = 6 + (mx - day[i].tc) / (mx - mn) * (H - 26);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    if (day[i].rain >= 0.1){ ctx.fillStyle = "#999"; ctx.fillRect(x - 2, H - 14, 4, Math.min(14, day[i].rain * 2)); ctx.fillStyle = "#111"; }
+  }
+  ctx.stroke();
+  if (nowIdx >= 0){ var nx = 4 + nowIdx * (W - 8) / (day.length - 1); ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(nx, 0); ctx.lineTo(nx, H - 16); ctx.stroke(); ctx.setLineDash([]); }
+  el("dayLab").innerHTML = "Peak " + round1(peak.tc) + "° at " + peak.t + (nowIdx >= 0 ? " · Now " + round1(day[nowIdx].tc) + "°" : "");
+}
+function loadDayCurveFallback(){
+  if (!havePos) return;
+  var url = "https://api.open-meteo.com/v1/forecast?latitude="+curLat+"&longitude="+curLon+"&hourly=temperature_2m,precipitation&timezone=Asia%2FBangkok&forecast_days=1";
+  getJSON(url, function(j){
+    if (wxFresh() && wxToday && wxToday.day && wxToday.day.length) return;
+    if (j && j.hourly && j.hourly.time){
+      var day = [], i;
+      for (i=0;i<j.hourly.time.length;i++){ day.push({t: String(j.hourly.time[i]).substring(11,16), tc: j.hourly.temperature_2m[i], rain: j.hourly.precipitation[i] || 0}); }
+      renderDayCurve(day, "Open-Meteo");
+    }
+  }, function(){});
+}
 function loadNow(){
   if (!havePos) return;
   /* Source per variable (2026-10-24): current + forecast are pinned to ECMWF IFS —
@@ -349,6 +389,7 @@ function useWx(j){
   renderNowSub();
   applyWxToday();
   if (j.next && j.next.length) renderNextHours(j.next, "TMD");
+  if (j.day && j.day.length) renderDayCurve(j.day, "TMD"); else loadDayCurveFallback();
   return true;
 }
 function applyWxToday(){
@@ -760,7 +801,7 @@ function applyPos(lat, lon){
   curLat = lat; curLon = lon; havePos = true;
   try { localStorage.setItem("deskPos", JSON.stringify({ lat: lat, lon: lon })); } catch(e){}
   if (el("fCoords")) el("fCoords").innerHTML = fmtCoord(lat, lon);
-  loadNow(); loadHistory(); loadWx(); loadNextFallback(); loadUV(); loadRainChance(); loadHourUV();
+  loadNow(); loadHistory(); loadWx(); loadNextFallback(); loadUV(); loadRainChance(); loadHourUV(); loadDayCurveFallback();
   var url = "https://api.bigdatacloud.net/data/reverse-geocode-client?latitude="+lat+"&longitude="+lon+"&localityLanguage=en";
   getJSON(url, function(j){
     var name = j.city || j.locality || j.principalSubdivision || "";
@@ -943,7 +984,7 @@ tickClock();
 setInterval(tickClock, 10000);
 restorePos();
 locate();
-setInterval(function(){ locate(); loadNow(); loadWx(); loadNextFallback(); loadUV(); loadRainChance(); loadHourUV(); }, 15*60*1000);
+setInterval(function(){ locate(); loadNow(); loadWx(); loadNextFallback(); loadUV(); loadRainChance(); loadHourUV(); loadDayCurveFallback(); }, 15*60*1000);
 setTimeout(function(){
   var m = /[?&]note=([^&]*)/.exec(location.search);
   location.replace(location.pathname + "?v=" + new Date().getTime() + (m ? "&note=" + m[1] : ""));
