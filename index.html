@@ -248,9 +248,12 @@ function loadNow(){
     el("nowTemp").innerHTML = Math.round(j.current.temperature_2m) + "°";
     if (wxFresh()) el("nowTemp").innerHTML = Math.round(wxToday.now) + "°";
     var c = j.current;
-    if (c.apparent_temperature!==null && c.apparent_temperature!==undefined) el("aFeels").innerHTML = Math.round(c.apparent_temperature) + "°";
-    if (c.relative_humidity_2m!==null && c.relative_humidity_2m!==undefined) el("aHum").innerHTML = Math.round(c.relative_humidity_2m) + "%";
-    if (c.wind_speed_10m!==null && c.wind_speed_10m!==undefined) el("aWind").innerHTML = Math.round(c.wind_speed_10m) + " km/h " + compass(c.wind_direction_10m);
+    var tmdNow = (wxToday && wxToday.now_rh!==null && wxToday.now_rh!==undefined);
+    if (!tmdNow){
+      if (c.apparent_temperature!==null && c.apparent_temperature!==undefined) el("aFeels").innerHTML = Math.round(c.apparent_temperature) + "°";
+      if (c.relative_humidity_2m!==null && c.relative_humidity_2m!==undefined) el("aHum").innerHTML = Math.round(c.relative_humidity_2m) + "%";
+      if (c.wind_speed_10m!==null && c.wind_speed_10m!==undefined) el("aWind").innerHTML = Math.round(c.wind_speed_10m) + " km/h " + compass(c.wind_direction_10m);
+    }
   };
   getJSON(base+"&models=ecmwf_ifs025", function(j){
     if (j && j.current && j.current.temperature_2m!==null && j.current.temperature_2m!==undefined) show(j);
@@ -308,6 +311,14 @@ function useWx(j){
   if (distKm(curLat, curLon, j.glat, j.glon) > 8) return false;
   wxToday = j;
   el("nowTemp").innerHTML = Math.round(j.now) + "°";
+  if (j.now_rh!==null && j.now_rh!==undefined) el("aHum").innerHTML = Math.round(j.now_rh) + "%";
+  if (j.now_ws!==null && j.now_ws!==undefined) el("aWind").innerHTML = Math.round(j.now_ws * 3.6) + " km/h " + compass(j.now_wd);
+  if (j.now!==null && j.now!==undefined && j.now_rh!==null && j.now_rh!==undefined && j.now_ws!==null && j.now_ws!==undefined){
+    var tcT = j.now, rhT = j.now_rh, wsT = j.now_ws;
+    var eT = (rhT / 100) * 6.105 * Math.exp(17.27 * tcT / (237.7 + tcT));
+    var atT = tcT + 0.33 * eT - 0.70 * wsT - 4.0;
+    el("aFeels").innerHTML = Math.round(atT) + "°";
+  }
   applyWxToday();
   if (j.next && j.next.length) renderNextHours(j.next, "TMD");
   return true;
@@ -407,18 +418,35 @@ function loadNextFallback(){
   };
   run(base + "&models=ecmwf_ifs025", true);
 }
-function setUV(v){
+function uvLabel(uv){ return uv<=2 ? "Low" : uv<=7 ? "Average" : uv<=10 ? "Very High" : "Extreme"; }
+function setUV(v, isNow){
   var uv = Math.round(v);
   el("aUV").innerHTML = uv;
-  el("aUVlab").innerHTML = "UV max · " + (uv<=2 ? "Low" : uv<=7 ? "Average" : uv<=10 ? "Very High" : "Extreme");
+  el("aUVlab").innerHTML = (isNow ? "UV now · " : "UV max · ") + uvLabel(uv);
+}
+function loadUVMax(){
+  var url = "https://api.open-meteo.com/v1/forecast?latitude="+curLat+"&longitude="+curLon+
+    "&daily=uv_index_max&timezone=auto&forecast_days=1";
+  getJSON(url, function(j){
+    if (j && j.daily && j.daily.uv_index_max && j.daily.uv_index_max[0]!==null && j.daily.uv_index_max[0]!==undefined) setUV(j.daily.uv_index_max[0], false);
+  }, function(){});
 }
 function loadUV(){
   if (!havePos) return;
   var url = "https://api.open-meteo.com/v1/forecast?latitude="+curLat+"&longitude="+curLon+
-    "&daily=uv_index_max&timezone=auto&forecast_days=1";
+    "&hourly=uv_index&timezone=Asia%2FBangkok&forecast_days=1";
   getJSON(url, function(j){
-    if (j && j.daily && j.daily.uv_index_max && j.daily.uv_index_max[0]!==null && j.daily.uv_index_max[0]!==undefined) setUV(j.daily.uv_index_max[0]);
-  }, function(){});
+    if (j && j.hourly && j.hourly.time && j.hourly.uv_index){
+      var nowD = new Date(), i, best = -1, bestDiff = 1e18;
+      for (i=0;i<j.hourly.time.length;i++){
+        var td = new Date(j.hourly.time[i]);
+        var diff = Math.abs(td.getTime() - nowD.getTime());
+        if (diff < bestDiff){ bestDiff = diff; best = i; }
+      }
+      if (best >= 0 && j.hourly.uv_index[best]!==null && j.hourly.uv_index[best]!==undefined){ setUV(j.hourly.uv_index[best], true); return; }
+    }
+    loadUVMax();
+  }, function(){ loadUVMax(); });
 }
 
 /* ---------- historical stats (Open-Meteo Archive, ERA5) ---------- */
@@ -812,7 +840,7 @@ tickClock();
 setInterval(tickClock, 10000);
 restorePos();
 locate();
-setInterval(function(){ locate(); loadNow(); loadWx(); loadNextFallback(); }, 15*60*1000);
+setInterval(function(){ locate(); loadNow(); loadWx(); loadNextFallback(); loadUV(); }, 15*60*1000);
 setTimeout(function(){
   var m = /[?&]note=([^&]*)/.exec(location.search);
   location.replace(location.pathname + "?v=" + new Date().getTime() + (m ? "&note=" + m[1] : ""));
