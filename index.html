@@ -241,10 +241,6 @@ function renderNowSub(){
   var feels = el("aFeels").innerHTML, hum = el("aHum").innerHTML, wind = el("aWind").innerHTML;
   var t = "Feels " + feels + " · Hum " + hum + " · Wind " + wind;
   if (nowRainChance!==null) t += " · Rain chance " + nowRainChance + "% next 6h";
-  var fresh = [];
-  if (wxFreshTxt) fresh.push("TMD " + wxFreshTxt);
-  if (airFreshTxt) fresh.push("Air " + airFreshTxt);
-  if (fresh.length) t += " · as of " + fresh.join(" / ");
   el("nowSub").innerHTML = t;
 }
 function loadRainChance(){
