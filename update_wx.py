@@ -104,6 +104,18 @@ def main():
         if len(nxt) >= 6:
             break
 
+    # Day Curve: full today hourly list for the desk page (00:00-23:00, TMD).
+    day = []
+    for e in fc:
+        t = datetime.fromisoformat(e["time"])
+        d = e.get("data") or {}
+        if d.get("tc") is None:
+            continue
+        day.append({
+            "t": t.strftime("%H:00"),
+            "tc": round(d["tc"], 1),
+            "rain": round(d.get("rain") or 0, 1),
+        })
     payload = {
         "ts": int(now.timestamp()),
         "glat": loc.get("lat"),
@@ -116,6 +128,7 @@ def main():
         "lo": round(lo, 1),
         "rain": round(rain, 1),
         "next": nxt,
+        "day": day,
     }
     with open("wx.json", "w", encoding="utf-8") as f:
         json.dump(payload, f)
