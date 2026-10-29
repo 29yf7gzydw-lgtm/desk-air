@@ -1,9 +1,9 @@
 
 
-Now 27.2C
-Hi 35.5C Lo 26.3C
-Rain 17.5mm
-Next OVERCAST
+Now 25.2C
+Hi 32.9C Lo 25.2C
+Rain 7.6mm
+Next CLOUDY
 No rain 6h
-Rain chance 14%
-UV 7.3 max
+Rain chance 31%
+UV 7.8 max
