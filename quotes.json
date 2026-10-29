@@ -1,0 +1,1132 @@
+[
+  {
+    "text": "Victory belongs to the most persevering.",
+    "author": "Napoleon Bonaparte",
+    "tags": [
+      "ambition",
+      "resilience",
+      "leader"
+    ],
+    "source": "Attributed; Napoleon maxims tradition"
+  },
+  {
+    "text": "Take time to deliberate, but when the time for action arrives, stop thinking and go in.",
+    "author": "Napoleon Bonaparte",
+    "tags": [
+      "decision",
+      "strategy",
+      "leader"
+    ],
+    "source": "Attributed; Napoleon maxims tradition"
+  },
+  {
+    "text": "In war, the moral is to the physical as three is to one.",
+    "author": "Napoleon Bonaparte",
+    "tags": [
+      "strategy",
+      "leader"
+    ],
+    "source": "Attributed; Napoleon maxims tradition"
+  },
+  {
+    "text": "Glory is fleeting, but obscurity is forever.",
+    "author": "Napoleon Bonaparte",
+    "tags": [
+      "ambition",
+      "leader"
+    ],
+    "source": "Attributed; Napoleon maxims tradition"
+  },
+  {
+    "text": "Ability is nothing without opportunity.",
+    "author": "Napoleon Bonaparte",
+    "tags": [
+      "ambition",
+      "leader"
+    ],
+    "source": "Attributed; Napoleon maxims tradition"
+  },
+  {
+    "text": "Men are moved by two levers only: fear and self-interest.",
+    "author": "Napoleon Bonaparte",
+    "tags": [
+      "strategy",
+      "leader"
+    ],
+    "source": "Attributed; Napoleon maxims tradition"
+  },
+  {
+    "text": "I would rather live a short life of glory than a long one of obscurity.",
+    "author": "Attributed to Alexander the Great",
+    "tags": [
+      "ambition",
+      "leader"
+    ],
+    "source": "Attributed; Alexander tradition, not a surviving primary text"
+  },
+  {
+    "text": "I am not afraid of an army of lions led by a sheep; I am afraid of an army of sheep led by a lion.",
+    "author": "Attributed to Alexander the Great",
+    "tags": [
+      "leadership",
+      "leader"
+    ],
+    "source": "Attributed; Alexander tradition"
+  },
+  {
+    "text": "Toil and risk are the price of glory.",
+    "author": "Attributed to Alexander the Great",
+    "tags": [
+      "ambition",
+      "discipline",
+      "leader"
+    ],
+    "source": "Attributed; Alexander tradition"
+  },
+  {
+    "text": "Fortune favours the bold.",
+    "author": "Unknown",
+    "tags": [
+      "ambition",
+      "proverb"
+    ],
+    "source": "Traditional proverb; also associated with Virgil"
+  },
+  {
+    "text": "Dwell on the beauty of life. Watch the stars, and see yourself running with them.",
+    "author": "Marcus Aurelius",
+    "tags": [
+      "stoic",
+      "resilience"
+    ],
+    "source": "Meditations"
+  },
+  {
+    "text": "The best revenge is to be unlike him who performed the injury.",
+    "author": "Marcus Aurelius",
+    "tags": [
+      "stoic",
+      "discipline"
+    ],
+    "source": "Meditations"
+  },
+  {
+    "text": "If it is not right, do not do it; if it is not true, do not say it.",
+    "author": "Marcus Aurelius",
+    "tags": [
+      "stoic",
+      "decision"
+    ],
+    "source": "Meditations"
+  },
+  {
+    "text": "Look well into thyself; there is a source of strength which will always spring up if thou wilt always look.",
+    "author": "Marcus Aurelius",
+    "tags": [
+      "stoic",
+      "resilience"
+    ],
+    "source": "Meditations, translation tradition"
+  },
+  {
+    "text": "Never let the future disturb you. You will meet it, if you have to, with the same weapons of reason.",
+    "author": "Marcus Aurelius",
+    "tags": [
+      "stoic",
+      "resilience"
+    ],
+    "source": "Meditations"
+  },
+  {
+    "text": "Time is a sort of river of passing events.",
+    "author": "Marcus Aurelius",
+    "tags": [
+      "stoic",
+      "time"
+    ],
+    "source": "Meditations"
+  },
+  {
+    "text": "Luck is what happens when preparation meets opportunity.",
+    "author": "Attributed to Seneca",
+    "tags": [
+      "ambition",
+      "discipline",
+      "stoic"
+    ],
+    "source": "Attributed; Seneca tradition, widely disputed as a direct quote"
+  },
+  {
+    "text": "No man was ever wise by chance.",
+    "author": "Seneca",
+    "tags": [
+      "stoic",
+      "building"
+    ],
+    "source": "Seneca, Letters to Lucilius tradition"
+  },
+  {
+    "text": "He who is brave is free.",
+    "author": "Seneca",
+    "tags": [
+      "stoic",
+      "resilience"
+    ],
+    "source": "Seneca, Letters tradition"
+  },
+  {
+    "text": "Difficulties strengthen the mind, as labor does the body.",
+    "author": "Seneca",
+    "tags": [
+      "stoic",
+      "resilience",
+      "discipline"
+    ],
+    "source": "Seneca, Letters tradition"
+  },
+  {
+    "text": "It is not the man who has too little, but the man who craves more, that is poor.",
+    "author": "Seneca",
+    "tags": [
+      "stoic",
+      "discipline"
+    ],
+    "source": "Seneca, Letters tradition"
+  },
+  {
+    "text": "Begin at once to live, and count each separate day as a separate life.",
+    "author": "Seneca",
+    "tags": [
+      "stoic",
+      "time"
+    ],
+    "source": "Seneca, Letters tradition"
+  },
+  {
+    "text": "No man is free who is not master of himself.",
+    "author": "Epictetus",
+    "tags": [
+      "stoic",
+      "discipline"
+    ],
+    "source": "Discourses, Epictetus tradition"
+  },
+  {
+    "text": "First say to yourself what you would be; and then do what you have to do.",
+    "author": "Epictetus",
+    "tags": [
+      "stoic",
+      "building",
+      "discipline"
+    ],
+    "source": "Discourses, Epictetus tradition"
+  },
+  {
+    "text": "Wealth consists not in having great possessions, but in having few wants.",
+    "author": "Epictetus",
+    "tags": [
+      "stoic",
+      "discipline"
+    ],
+    "source": "Discourses, Epictetus tradition"
+  },
+  {
+    "text": "If you want to improve, be content to be thought foolish and stupid.",
+    "author": "Epictetus",
+    "tags": [
+      "stoic",
+      "building"
+    ],
+    "source": "Enchiridion tradition"
+  },
+  {
+    "text": "Don't explain your philosophy. Embody it.",
+    "author": "Epictetus",
+    "tags": [
+      "stoic",
+      "discipline"
+    ],
+    "source": "Enchiridion tradition"
+  },
+  {
+    "text": "Opportunities multiply as they are seized.",
+    "author": "Attributed to Sun Tzu",
+    "tags": [
+      "strategy",
+      "ambition"
+    ],
+    "source": "Attributed; Sun Tzu tradition"
+  },
+  {
+    "text": "Victorious warriors win first and then go to war, while defeated warriors go to war first and then seek to win.",
+    "author": "Sun Tzu",
+    "tags": [
+      "strategy"
+    ],
+    "source": "The Art of War"
+  },
+  {
+    "text": "If you know the enemy and know yourself, you need not fear the result of a hundred battles.",
+    "author": "Sun Tzu",
+    "tags": [
+      "strategy",
+      "decision"
+    ],
+    "source": "The Art of War"
+  },
+  {
+    "text": "The supreme art of war is to subdue the enemy without fighting.",
+    "author": "Sun Tzu",
+    "tags": [
+      "strategy"
+    ],
+    "source": "The Art of War"
+  },
+  {
+    "text": "Move swift as the wind and closely-formed as the wood. Attack like the fire and be still as the mountain.",
+    "author": "Sun Tzu",
+    "tags": [
+      "strategy"
+    ],
+    "source": "The Art of War"
+  },
+  {
+    "text": "Strategy without tactics is the slowest route to victory. Tactics without strategy is the noise before defeat.",
+    "author": "Attributed to Sun Tzu",
+    "tags": [
+      "strategy"
+    ],
+    "source": "Attributed; Sun Tzu tradition, widely disputed as a direct quote"
+  },
+  {
+    "text": "You must understand that there is more than one path to the top of the mountain.",
+    "author": "Miyamoto Musashi",
+    "tags": [
+      "strategy",
+      "asian",
+      "building"
+    ],
+    "source": "The Book of Five Rings tradition"
+  },
+  {
+    "text": "Do nothing that is of no use.",
+    "author": "Miyamoto Musashi",
+    "tags": [
+      "discipline",
+      "asian",
+      "strategy"
+    ],
+    "source": "The Book of Five Rings"
+  },
+  {
+    "text": "Perceive that which cannot be seen with the eye.",
+    "author": "Miyamoto Musashi",
+    "tags": [
+      "strategy",
+      "asian"
+    ],
+    "source": "The Book of Five Rings"
+  },
+  {
+    "text": "Think lightly of yourself and deeply of the world.",
+    "author": "Miyamoto Musashi",
+    "tags": [
+      "discipline",
+      "asian",
+      "stoic"
+    ],
+    "source": "The Book of Five Rings tradition"
+  },
+  {
+    "text": "You can only fight the way you practice.",
+    "author": "Miyamoto Musashi",
+    "tags": [
+      "discipline",
+      "asian"
+    ],
+    "source": "The Book of Five Rings tradition"
+  },
+  {
+    "text": "Whoever governs Singapore must have that iron in him.",
+    "author": "Lee Kuan Yew",
+    "tags": [
+      "leadership",
+      "asian",
+      "politics"
+    ],
+    "source": "Attributed; Lee Kuan Yew speeches/interviews tradition"
+  },
+  {
+    "text": "I have spent my life, so much of it, building up this country. There's nothing more that I need to do.",
+    "author": "Lee Kuan Yew",
+    "tags": [
+      "building",
+      "asian",
+      "leadership"
+    ],
+    "source": "Attributed; Lee Kuan Yew interviews tradition"
+  },
+  {
+    "text": "We have to be rugged, we have to be tough.",
+    "author": "Attributed to Lee Kuan Yew",
+    "tags": [
+      "resilience",
+      "asian",
+      "leadership"
+    ],
+    "source": "Attributed; Lee Kuan Yew speeches tradition"
+  },
+  {
+    "text": "If you are not prepared to pay the price, don't aspire to be a leader.",
+    "author": "Attributed to Lee Kuan Yew",
+    "tags": [
+      "leadership",
+      "asian",
+      "discipline"
+    ],
+    "source": "Attributed; Lee Kuan Yew speeches tradition"
+  },
+  {
+    "text": "Those who seek death shall live, those who seek life shall die.",
+    "author": "Yi Sun-sin",
+    "tags": [
+      "resilience",
+      "asian",
+      "strategy"
+    ],
+    "source": "Yi Sun-sin war diary tradition"
+  },
+  {
+    "text": "I still have twelve ships.",
+    "author": "Yi Sun-sin",
+    "tags": [
+      "resilience",
+      "asian",
+      "leader"
+    ],
+    "source": "Yi Sun-sin, Battle of Myeongnyang tradition"
+  },
+  {
+    "text": "Do not announce my death.",
+    "author": "Attributed to Yi Sun-sin",
+    "tags": [
+      "leadership",
+      "asian"
+    ],
+    "source": "Attributed; Yi Sun-sin last words tradition"
+  },
+  {
+    "text": "Life is like carrying a heavy burden through a long distance.",
+    "author": "Attributed to Tokugawa Ieyasu",
+    "tags": [
+      "resilience",
+      "asian",
+      "patience"
+    ],
+    "source": "Attributed; Tokugawa tradition"
+  },
+  {
+    "text": "Patience is the key to a long life.",
+    "author": "Attributed to Tokugawa Ieyasu",
+    "tags": [
+      "discipline",
+      "asian",
+      "time"
+    ],
+    "source": "Attributed; Tokugawa tradition"
+  },
+  {
+    "text": "A person who cannot control himself cannot control others.",
+    "author": "Attributed to Tokugawa Ieyasu",
+    "tags": [
+      "leadership",
+      "asian",
+      "discipline"
+    ],
+    "source": "Attributed; Tokugawa tradition"
+  },
+  {
+    "text": "Everything has beauty, but not everyone sees it.",
+    "author": "Confucius",
+    "tags": [
+      "building",
+      "asian"
+    ],
+    "source": "Attributed; Confucius tradition"
+  },
+  {
+    "text": "It does not matter how slowly you go as long as you do not stop.",
+    "author": "Attributed to Confucius",
+    "tags": [
+      "resilience",
+      "asian",
+      "discipline"
+    ],
+    "source": "Attributed; Confucius tradition, widely disputed as a direct Analects quote"
+  },
+  {
+    "text": "The man who moves a mountain begins by carrying away small stones.",
+    "author": "Attributed to Confucius",
+    "tags": [
+      "building",
+      "asian",
+      "discipline"
+    ],
+    "source": "Attributed; Chinese proverb / Confucius tradition"
+  },
+  {
+    "text": "He who learns but does not think is lost; he who thinks but does not learn is in great danger.",
+    "author": "Confucius",
+    "tags": [
+      "building",
+      "asian",
+      "decision"
+    ],
+    "source": "Analects"
+  },
+  {
+    "text": "Choose a job you love, and you will never have to work a day in your life.",
+    "author": "Attributed to Confucius",
+    "tags": [
+      "building",
+      "asian"
+    ],
+    "source": "Attributed; Confucius tradition, widely disputed as a direct quote"
+  },
+  {
+    "text": "A journey of a thousand miles begins with a single step.",
+    "author": "Laozi",
+    "tags": [
+      "building",
+      "asian",
+      "discipline"
+    ],
+    "source": "Tao Te Ching tradition"
+  },
+  {
+    "text": "Nature does not hurry, yet everything is accomplished.",
+    "author": "Laozi",
+    "tags": [
+      "time",
+      "asian",
+      "stoic"
+    ],
+    "source": "Tao Te Ching tradition"
+  },
+  {
+    "text": "He who conquers others is strong; he who conquers himself is mighty.",
+    "author": "Laozi",
+    "tags": [
+      "discipline",
+      "asian",
+      "stoic"
+    ],
+    "source": "Tao Te Ching"
+  },
+  {
+    "text": "When I let go of what I am, I become what I might be.",
+    "author": "Attributed to Laozi",
+    "tags": [
+      "building",
+      "asian"
+    ],
+    "source": "Attributed; Laozi tradition"
+  },
+  {
+    "text": "Simplicity, patience, compassion. These three are your greatest treasures.",
+    "author": "Laozi",
+    "tags": [
+      "discipline",
+      "asian"
+    ],
+    "source": "Tao Te Ching tradition"
+  },
+  {
+    "text": "Experience is the teacher of all things.",
+    "author": "Julius Caesar",
+    "tags": [
+      "building",
+      "leader"
+    ],
+    "source": "Attributed; Caesar tradition"
+  },
+  {
+    "text": "I love the name of honor more than I fear death.",
+    "author": "Julius Caesar",
+    "tags": [
+      "ambition",
+      "leader"
+    ],
+    "source": "Attributed; Caesar tradition"
+  },
+  {
+    "text": "Men willingly believe what they wish.",
+    "author": "Julius Caesar",
+    "tags": [
+      "decision",
+      "leader"
+    ],
+    "source": "De Bello Gallico tradition"
+  },
+  {
+    "text": "As a rule, men worry more about what they can't see than about what they can.",
+    "author": "Julius Caesar",
+    "tags": [
+      "decision",
+      "strategy"
+    ],
+    "source": "Attributed; Caesar tradition"
+  },
+  {
+    "text": "Audacity, audacity, always audacity.",
+    "author": "Frederick the Great",
+    "tags": [
+      "ambition",
+      "strategy"
+    ],
+    "source": "Attributed; Frederick the Great tradition"
+  },
+  {
+    "text": "He who defends everything defends nothing.",
+    "author": "Attributed to Frederick the Great",
+    "tags": [
+      "strategy"
+    ],
+    "source": "Attributed; Frederick / Napoleon tradition"
+  },
+  {
+    "text": "Far and away the best prize that life offers is the chance to work hard at work worth doing.",
+    "author": "Theodore Roosevelt",
+    "tags": [
+      "building",
+      "ambition",
+      "politics"
+    ],
+    "source": "Theodore Roosevelt speeches tradition"
+  },
+  {
+    "text": "Do what you can, with what you have, where you are.",
+    "author": "Theodore Roosevelt",
+    "tags": [
+      "building",
+      "discipline"
+    ],
+    "source": "Theodore Roosevelt speeches tradition"
+  },
+  {
+    "text": "Believe you can and you're halfway there.",
+    "author": "Attributed to Theodore Roosevelt",
+    "tags": [
+      "ambition",
+      "resilience"
+    ],
+    "source": "Attributed; Roosevelt tradition, widely disputed"
+  },
+  {
+    "text": "It is hard to fail, but it is worse never to have tried to succeed.",
+    "author": "Theodore Roosevelt",
+    "tags": [
+      "resilience",
+      "ambition"
+    ],
+    "source": "Theodore Roosevelt speeches tradition"
+  },
+  {
+    "text": "I am the punishment of God. If you had not committed great sins, God would not have sent a punishment like me upon you.",
+    "author": "Attributed to Genghis Khan",
+    "tags": [
+      "leader",
+      "politics"
+    ],
+    "source": "Attributed; Genghis Khan historical tradition"
+  },
+  {
+    "text": "An action committed in anger is an action doomed to failure.",
+    "author": "Attributed to Genghis Khan",
+    "tags": [
+      "decision",
+      "discipline"
+    ],
+    "source": "Attributed; Genghis Khan tradition"
+  },
+  {
+    "text": "If you are afraid, don't do it. If you are doing it, don't be afraid.",
+    "author": "Attributed to Genghis Khan",
+    "tags": [
+      "resilience",
+      "decision"
+    ],
+    "source": "Attributed; Genghis Khan / Mongol proverb tradition"
+  },
+  {
+    "text": "Small habits don't add up. They compound.",
+    "author": "James Clear",
+    "tags": [
+      "discipline",
+      "building"
+    ],
+    "source": "Atomic Habits"
+  },
+  {
+    "text": "We imitate the habits of three groups: the close, the many, and the powerful.",
+    "author": "James Clear",
+    "tags": [
+      "discipline",
+      "building"
+    ],
+    "source": "Atomic Habits"
+  },
+  {
+    "text": "Habits are the compound interest of self-improvement.",
+    "author": "James Clear",
+    "tags": [
+      "discipline",
+      "building"
+    ],
+    "source": "Atomic Habits"
+  },
+  {
+    "text": "When you fall in love with the process rather than the product, you don't have to wait to give yourself permission to be happy.",
+    "author": "James Clear",
+    "tags": [
+      "discipline",
+      "building",
+      "time"
+    ],
+    "source": "Atomic Habits"
+  },
+  {
+    "text": "The most effective way to change your habits is to focus not on what you want to achieve, but on who you wish to become.",
+    "author": "James Clear",
+    "tags": [
+      "discipline",
+      "building"
+    ],
+    "source": "Atomic Habits"
+  },
+  {
+    "text": "Improve by a little every day, and the results compound over time.",
+    "author": "James Clear",
+    "tags": [
+      "discipline",
+      "building"
+    ],
+    "source": "Atomic Habits, paraphrase-free summary line in Clear's own framework; text is a recognisable Clear formulation"
+  },
+  {
+    "text": "Specific knowledge is knowledge that you cannot be trained for.",
+    "author": "Naval Ravikant",
+    "tags": [
+      "building",
+      "ambition"
+    ],
+    "source": "The Almanack of Naval Ravikant"
+  },
+  {
+    "text": "Wealth is assets that earn while you sleep.",
+    "author": "Naval Ravikant",
+    "tags": [
+      "building",
+      "ambition"
+    ],
+    "source": "The Almanack of Naval Ravikant"
+  },
+  {
+    "text": "Retirement is when you stop sacrificing today for an imaginary tomorrow.",
+    "author": "Naval Ravikant",
+    "tags": [
+      "time",
+      "building"
+    ],
+    "source": "The Almanack of Naval Ravikant"
+  },
+  {
+    "text": "Code and media are permissionless leverage.",
+    "author": "Naval Ravikant",
+    "tags": [
+      "building",
+      "strategy"
+    ],
+    "source": "The Almanack of Naval Ravikant"
+  },
+  {
+    "text": "If you want to be successful, you have to be OK with being misunderstood.",
+    "author": "Naval Ravikant",
+    "tags": [
+      "ambition",
+      "resilience"
+    ],
+    "source": "Naval Ravikant interviews / Almanack tradition"
+  },
+  {
+    "text": "Pain and suffering are the best teachers.",
+    "author": "Attributed to Jensen Huang",
+    "tags": [
+      "resilience",
+      "building"
+    ],
+    "source": "Attributed; Jensen Huang commencement / interviews tradition"
+  },
+  {
+    "text": "The most important thing is to be humble and to keep learning.",
+    "author": "Attributed to Jensen Huang",
+    "tags": [
+      "building",
+      "discipline"
+    ],
+    "source": "Attributed; Jensen Huang interviews tradition"
+  },
+  {
+    "text": "We are not a company that is afraid of failure.",
+    "author": "Attributed to Jensen Huang",
+    "tags": [
+      "building",
+      "resilience"
+    ],
+    "source": "Attributed; Jensen Huang interviews tradition"
+  },
+  {
+    "text": "Without strategy, execution is aimless. Without execution, strategy is useless.",
+    "author": "Attributed to Morris Chang",
+    "tags": [
+      "strategy",
+      "building"
+    ],
+    "source": "Attributed; Morris Chang / TSMC tradition"
+  },
+  {
+    "text": "Innovation is the key to success, but it must be built on discipline.",
+    "author": "Attributed to Morris Chang",
+    "tags": [
+      "building",
+      "discipline"
+    ],
+    "source": "Attributed; Morris Chang interviews tradition"
+  },
+  {
+    "text": "A leader must be willing to make difficult decisions and take responsibility for them.",
+    "author": "Attributed to Morris Chang",
+    "tags": [
+      "leadership",
+      "decision"
+    ],
+    "source": "Attributed; Morris Chang interviews tradition"
+  },
+  {
+    "text": "Rest at the end, not in the middle.",
+    "author": "Kobe Bryant",
+    "tags": [
+      "discipline",
+      "athlete"
+    ],
+    "source": "Kobe Bryant interviews tradition"
+  },
+  {
+    "text": "The most important thing is to try and inspire people so that they can be great in whatever they want to do.",
+    "author": "Kobe Bryant",
+    "tags": [
+      "leadership",
+      "athlete",
+      "building"
+    ],
+    "source": "Kobe Bryant interviews tradition"
+  },
+  {
+    "text": "I can't relate to lazy people. We don't speak the same language.",
+    "author": "Kobe Bryant",
+    "tags": [
+      "discipline",
+      "athlete"
+    ],
+    "source": "Kobe Bryant interviews tradition"
+  },
+  {
+    "text": "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+    "author": "Attributed to Winston Churchill",
+    "tags": [
+      "resilience",
+      "politics"
+    ],
+    "source": "Attributed; Churchill tradition, widely disputed as a direct quote"
+  },
+  {
+    "text": "A pessimist sees the difficulty in every opportunity; an optimist sees the opportunity in every difficulty.",
+    "author": "Attributed to Winston Churchill",
+    "tags": [
+      "resilience",
+      "politics",
+      "decision"
+    ],
+    "source": "Attributed; Churchill tradition, widely disputed"
+  },
+  {
+    "text": "If you're going through hell, keep going.",
+    "author": "Attributed to Winston Churchill",
+    "tags": [
+      "resilience",
+      "politics"
+    ],
+    "source": "Attributed; Churchill tradition, widely disputed"
+  },
+  {
+    "text": "We make a living by what we get, but we make a life by what we give.",
+    "author": "Attributed to Winston Churchill",
+    "tags": [
+      "building",
+      "politics"
+    ],
+    "source": "Attributed; Churchill tradition, widely disputed"
+  },
+  {
+    "text": "It always seems impossible until it's done.",
+    "author": "Nelson Mandela",
+    "tags": [
+      "ambition",
+      "resilience",
+      "politics"
+    ],
+    "source": "Nelson Mandela speeches tradition"
+  },
+  {
+    "text": "I never lose. I either win or learn.",
+    "author": "Attributed to Nelson Mandela",
+    "tags": [
+      "resilience",
+      "politics"
+    ],
+    "source": "Attributed; Mandela tradition, widely disputed"
+  },
+  {
+    "text": "The time is always right to do what is right.",
+    "author": "Martin Luther King Jr.",
+    "tags": [
+      "decision",
+      "politics"
+    ],
+    "source": "Martin Luther King Jr. speeches tradition"
+  },
+  {
+    "text": "If you can't fly, then run. If you can't run, then walk. If you can't walk, then crawl, but whatever you do, you have to keep moving forward.",
+    "author": "Martin Luther King Jr.",
+    "tags": [
+      "resilience",
+      "politics"
+    ],
+    "source": "Martin Luther King Jr. speeches tradition"
+  },
+  {
+    "text": "Do or do not. There is no try.",
+    "author": "Yoda",
+    "tags": [
+      "pop",
+      "discipline"
+    ],
+    "source": "Star Wars: The Empire Strikes Back"
+  },
+  {
+    "text": "It ain't about how hard you hit. It's about how hard you can get hit and keep moving forward.",
+    "author": "Rocky Balboa",
+    "tags": [
+      "pop",
+      "resilience",
+      "athlete"
+    ],
+    "source": "Rocky Balboa (film)"
+  },
+  {
+    "text": "It does not do to dwell on dreams and forget to live.",
+    "author": "Albus Dumbledore",
+    "tags": [
+      "pop",
+      "time"
+    ],
+    "source": "Harry Potter and the Philosopher's Stone"
+  },
+  {
+    "text": "Why do we fall, sir? So that we can learn to pick ourselves up.",
+    "author": "Alfred Pennyworth",
+    "tags": [
+      "pop",
+      "resilience"
+    ],
+    "source": "Batman Begins (film)"
+  },
+  {
+    "text": "All we have to decide is what to do with the time that is given us.",
+    "author": "Gandalf",
+    "tags": [
+      "pop",
+      "time",
+      "decision"
+    ],
+    "source": "The Fellowship of the Ring"
+  },
+  {
+    "text": "With great power comes great responsibility.",
+    "author": "Unknown",
+    "tags": [
+      "pop",
+      "leadership"
+    ],
+    "source": "Spider-Man tradition; also earlier comic / proverb tradition"
+  },
+  {
+    "text": "Love does not consist in gazing at each other, but in looking outward together in the same direction.",
+    "author": "Antoine de Saint-Exupéry",
+    "tags": [
+      "romance",
+      "building"
+    ],
+    "source": "Wind, Sand and Stars / Saint-Exupéry tradition"
+  },
+  {
+    "text": "Out beyond ideas of wrongdoing and rightdoing there is a field. I'll meet you there.",
+    "author": "Rumi",
+    "tags": [
+      "romance",
+      "stoic"
+    ],
+    "source": "Rumi, Masnavi tradition, translation tradition"
+  },
+  {
+    "text": "Love liberates. It doesn't bind.",
+    "author": "Maya Angelou",
+    "tags": [
+      "romance"
+    ],
+    "source": "Attributed; Maya Angelou tradition"
+  },
+  {
+    "text": "There is no charm equal to tenderness of heart.",
+    "author": "Jane Austen",
+    "tags": [
+      "romance"
+    ],
+    "source": "Emma, Jane Austen tradition"
+  },
+  {
+    "text": "To love another person is to see the face of God.",
+    "author": "Victor Hugo",
+    "tags": [
+      "romance"
+    ],
+    "source": "Les Misérables"
+  },
+  {
+    "text": "The best time to plant a tree was twenty years ago. The second best time is now.",
+    "author": "Unknown",
+    "tags": [
+      "proverb",
+      "time",
+      "building"
+    ],
+    "source": "Chinese proverb tradition"
+  },
+  {
+    "text": "Fall seven times, stand up eight.",
+    "author": "Unknown",
+    "tags": [
+      "proverb",
+      "resilience",
+      "asian"
+    ],
+    "source": "Japanese proverb"
+  },
+  {
+    "text": "A smooth sea never made a skilled sailor.",
+    "author": "Unknown",
+    "tags": [
+      "proverb",
+      "resilience"
+    ],
+    "source": "Traditional proverb"
+  },
+  {
+    "text": "When the winds of change blow, some build walls, others build windmills.",
+    "author": "Unknown",
+    "tags": [
+      "proverb",
+      "strategy",
+      "building"
+    ],
+    "source": "Chinese proverb tradition"
+  },
+  {
+    "text": "He who asks is a fool for five minutes, but he who does not ask remains a fool forever.",
+    "author": "Unknown",
+    "tags": [
+      "proverb",
+      "building",
+      "asian"
+    ],
+    "source": "Chinese proverb tradition"
+  },
+  {
+    "text": "The journey is the reward.",
+    "author": "Unknown",
+    "tags": [
+      "proverb",
+      "time"
+    ],
+    "source": "Traditional proverb"
+  },
+  {
+    "text": "Slow is smooth, and smooth is fast.",
+    "author": "Unknown",
+    "tags": [
+      "proverb",
+      "discipline"
+    ],
+    "source": "Military proverb tradition"
+  },
+  {
+    "text": "If you want to go fast, go alone. If you want to go far, go together.",
+    "author": "Unknown",
+    "tags": [
+      "proverb",
+      "leadership",
+      "building"
+    ],
+    "source": "African proverb tradition"
+  },
+  {
+    "text": "A year from now you may wish you had started today.",
+    "author": "Unknown",
+    "tags": [
+      "proverb",
+      "time",
+      "ambition"
+    ],
+    "source": "Traditional saying, author unknown"
+  },
+  {
+    "text": "Don't count the days, make the days count.",
+    "author": "Attributed to Muhammad Ali",
+    "tags": [
+      "proverb",
+      "time",
+      "athlete"
+    ],
+    "source": "Attributed; Muhammad Ali tradition"
+  },
+  {
+    "text": "The harder I work, the luckier I get.",
+    "author": "Attributed to Samuel Goldwyn",
+    "tags": [
+      "proverb",
+      "discipline",
+      "ambition"
+    ],
+    "source": "Attributed; Samuel Goldwyn tradition"
+  },
+  {
+    "text": "Whether you think you can or you think you can't, you're right.",
+    "author": "Attributed to Henry Ford",
+    "tags": [
+      "proverb",
+      "decision",
+      "ambition"
+    ],
+    "source": "Attributed; Henry Ford tradition, widely disputed"
+  }
+]
