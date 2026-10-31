@@ -1,9 +1,9 @@
 
 
-Now 26.1C
-Hi 33.1C Lo 25.6C
-Rain 5.3mm
-Next CLOUDY
-Rain 13:00 0.2mm
-Rain chance 68%
+Now 31.9C
+Hi 32.5C Lo 26.2C
+Rain 12.8mm
+Next L.RAIN
+Rain 15:00 7.5mm
+Rain chance 99%
 UV 7.8 max
