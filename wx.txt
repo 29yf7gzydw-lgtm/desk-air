@@ -1,9 +1,9 @@
 
 
-Now 28.6C
-Hi 34.3C Lo 27.6C
-Rain 0.3mm
+Now 26.7C
+Hi 34.8C Lo 26.7C
+Rain 0.1mm
 Next OVERCAST
-Rain 21:00 0.1mm
-Rain chance 41%
+No rain 6h
+Rain chance 29%
 UV 7.8 max
