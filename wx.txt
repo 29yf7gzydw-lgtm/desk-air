@@ -1,9 +1,9 @@
 
 
-Now 33.6C
-Hi 34.6C Lo 26.2C
+Now 29.0C
+Hi 33.9C Lo 27.6C
 Rain 0.0mm
 Next P.CLOUDY
 No rain 6h
-Rain chance 71%
+Rain chance 10%
 UV 7.8 max
